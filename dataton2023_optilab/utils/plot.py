@@ -43,7 +43,7 @@ def capacidad_vs_demanda(df_schudel, df_demand):
     capacidad, demanda = load_capacidad_demanda(df_schudel, df_demand)
 
     hora = F2H.values()
-    fig, ax = plt.subplots(figsize=(9,5))
+    fig, ax = plt.subplots(figsize=(10,5))
 
     # Plot 'oferta' data as bars
     ax.step(hora, capacidad['estado'], label='Capacidad', color='red',
