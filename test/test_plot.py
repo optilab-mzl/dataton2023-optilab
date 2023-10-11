@@ -13,4 +13,4 @@ workers = pd.read_excel("/home/juan/dev/dataton2023-optilab/data/Dataton 2023 Et
 
 #capacidad_vs_demanda(df_schudel, df_demand)
 
-diff_capacidad_vs_demanda(df_schudel, df_demand)
+#diff_capacidad_vs_demanda(df_schudel, df_demand)

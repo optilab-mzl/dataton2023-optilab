@@ -1,10 +1,17 @@
+"""
+Generates schedule for workers
+
+Usage:
+  get_schedule <excel_path> <output_path>
+"""
+from docopt import docopt
 import pandas as pd
 from .utils.time import F2H, FRANJAS
 from .utils.load import load_demanda
 from ortools.sat.python import cp_model
 from .constraints import set_program_workers_constraints, set_optmization
 
-def main(df_demanda,df_workers, df_path_out):
+def get_schedule(df_demanda,df_workers, df_path_out):
 
     model = cp_model.CpModel()
     demanda = load_demanda(df_demanda)
@@ -45,9 +52,22 @@ def main(df_demanda,df_workers, df_path_out):
                     'estado':resultado_estado,
                     'documento':resultado_trabajador
                     })
-    restults['suc_cod'] = 60
-    restults['fecha'] = "2024-04-22"
+                    
+    restults['suc_cod'] = df_demanda['suc_cod'].iloc[0]
+
+    fecha = df_demanda['fecha_hora'].iloc[0]
+    restults['fecha'] = f"{fecha.year}-{fecha.month:02d}-{fecha.day:02d}"
+
     restults['hora'] = [F2H[f] for f in resultado_franja]
     restults.to_csv(df_path_out, index=False)
 
-    
+
+def main():
+    arguments = docopt(__doc__)
+    excel_path = arguments['<excel_path>']
+    output_path = arguments['<output_path>']
+
+    df_demanda = pd.read_excel(excel_path, sheet_name="demand")
+    df_workers = pd.read_excel(excel_path, sheet_name="workers")
+
+    get_schedule(df_demanda, df_workers, output_path)

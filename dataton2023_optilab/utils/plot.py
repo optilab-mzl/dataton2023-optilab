@@ -5,7 +5,6 @@ from .time import F2H
 from .load import load_demanda
 
 
-
 def schedule(df_schedule):
     df = df_schedule.copy()
     df['hora_franja'] = df['hora_franja'].apply(lambda x: F2H[x])

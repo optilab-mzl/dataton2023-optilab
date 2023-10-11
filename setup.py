@@ -19,8 +19,14 @@ setup(
                      'ortools',
                      'pandas',
                      'seaborn',
-                     'matplotlib'
+                     'matplotlib',
+                     'docopt'
     ],
+
+    entry_points={'console_scripts': [
+        'get_schedule=dataton2023_optilab.engine:main'
+        ]
+        },
 
     include_package_data=True,
     #license='MIT License',
