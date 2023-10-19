@@ -11,6 +11,7 @@ def generar_franjas(inicio, final):
     return horas
 
 
-FRANJAS = list(range(30,76))
-H2F = {h:f for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
-F2H = {f:h for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
+FRANJAS_HORA = generar_franjas((7, 30), (19, 30))
+FRANJAS = list(range(30, len(FRANJAS_HORA)+30))
+H2F = {h: f for f, h in zip(FRANJAS, FRANJAS_HORA)}
+F2H = {f: h for f, h in zip(FRANJAS, FRANJAS_HORA)}

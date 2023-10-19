@@ -20,7 +20,8 @@ setup(
                      'pandas',
                      'seaborn',
                      'matplotlib',
-                     'docopt'
+                     'docopt',
+                     'xlsxwriter'
     ],
 
     entry_points={'console_scripts': [
