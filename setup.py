@@ -25,7 +25,8 @@ setup(
     ],
 
     entry_points={'console_scripts': [
-        'get_schedule=dataton2023_optilab.engine:main'
+        'get_schedule=dataton2023_optilab.engine:main',
+         'get_plot=dataton2023_optilab.utils.plot:main'
         ]
         },
 

@@ -20,7 +20,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         df_d = df_demanda[df_demanda['suc_cod']==branch]
         df_w = df_workers[df_workers['suc_cod']==branch]
         
-        demanda = load_demanda(df_d)
+        demanda, day2date = load_demanda(df_d, return_day2date=True)
         trabajadores = load_workers(df_w)
 
         model = cp_model.CpModel()
@@ -31,14 +31,14 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         variables = set_branch_contraints(model, demanda, trabajadores,
                                          franjas, posibles_estados)
 
-        print(len(variables.keys()))
-        #set_optmization(model, demanda, trabajadores, variables)
-
+    
+        set_optmization(model, demanda, variables)
 
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
         solver.log_callback = print  # (str)->None
         solver.parameters.num_search_workers = 7
+        #solver.parameters.set_cp_model_presolve = False
 
         print(solver.Solve(model))
 
@@ -46,8 +46,8 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         resultado_trabajador = []
         resultado_franja = []
         resultado_estado = []
-
-        for day in demanda.keys():
+        fechas = []
+        for i, day in enumerate(demanda.keys()):
             for trabajador in trabajadores:
                 for franja in franjas:
                     for estado in posibles_estados:
@@ -56,13 +56,15 @@ def get_schedule(df_demanda, df_workers, df_path_out):
                             resultado_estado.append(estado)
                             resultado_trabajador.append(trabajador)
                             days.append(day)
+                            fechas.append(day2date[day])
 
 
         restults = pd.DataFrame({
                         'dia':days,
                         'hora_franja':resultado_franja,
                         'estado':resultado_estado,
-                        'documento':resultado_trabajador
+                        'documento':resultado_trabajador,
+                        'fecha': fechas
                         })
                         
         restults['suc_cod'] = branch

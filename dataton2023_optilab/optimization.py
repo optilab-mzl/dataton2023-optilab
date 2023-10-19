@@ -1,32 +1,10 @@
 import numpy as np 
 
-def set_program_workers_constraints(model, demanda, trabajadores,
-                                     franjas, posibles_estados,
-                                      psibles_estados_wn):
-    variables = {}
-    for trabajador in trabajadores:
-        for franja in franjas:
-            for estado in posibles_estados:
-                variables[(trabajador,franja,estado)] = model.NewBoolVar(f"{trabajador}-{franja}-{estado}")
 
-    for trabajador in trabajadores:
-        variables_trabajador = {}
-        for franja in franjas:
-            for estado in posibles_estados:
-                variables_trabajador[(franja, estado)] = variables[(trabajador,franja,estado)]
-        set_program_worker_constraints(model, demanda, franjas, posibles_estados, psibles_estados_wn, variables_trabajador)
+def set_optmization(model, demanda, variables):
+    trabajadores, days, franjas, _ = zip(*variables.keys())
 
-
-    for franja in franjas:
-        model.AddAtLeastOne(variables[(t,franja,'Trabaja')] for t in trabajadores)
-
-    return variables
-
-
-
-def set_optmization(model, demanda, trabajadores, variables):
-    days, franjas, _ = zip(*variables.keys())
-
+    trabajadores = np.unique(trabajadores)
     days = np.unique(days)
     franjas = np.unique(franjas)
     
@@ -40,10 +18,10 @@ def set_optmization(model, demanda, trabajadores, variables):
             model.Add(trabjadores_en_franja < demanda[day][franja]).OnlyEnforceIf(demanda_alta)
             model.Add(trabjadores_en_franja >= demanda[day][franja]).OnlyEnforceIf(demanda_alta.Not())
 
-            resta = model.NewIntVar(0, max(demanda.values()), '')
+            resta = model.NewIntVar(0, max(demanda[day].values()), '')
             model.Add(resta == (demanda[day][franja] - trabjadores_en_franja) ).OnlyEnforceIf(demanda_alta)
-
             model.Add(resta == 0 ).OnlyEnforceIf(demanda_alta.Not())
+            
             restas.append(resta)
     
     
