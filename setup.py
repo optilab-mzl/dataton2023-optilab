@@ -16,7 +16,7 @@ setup(
 
     install_requires=[ 
                      'numpy',
-                     'ortools',
+                     'ortools==9.7.2996',
                      'pandas',
                      'seaborn',
                      'matplotlib',

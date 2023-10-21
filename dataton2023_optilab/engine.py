@@ -15,8 +15,11 @@ from .constraints.branch import set_branch_contraints
 from .optimization import set_optmization
 
 def get_schedule(df_demanda, df_workers, df_path_out):
-
+    
+    dfs_results = []
     for branch in df_workers['suc_cod'].unique():
+
+        print("#"*20,branch,"#"*20)
         df_d = df_demanda[df_demanda['suc_cod']==branch]
         df_w = df_workers[df_workers['suc_cod']==branch]
         
@@ -32,16 +35,23 @@ def get_schedule(df_demanda, df_workers, df_path_out):
                                          franjas, posibles_estados)
 
     
-        set_optmization(model, demanda, variables)
+        #set_optmization(model, demanda, variables)
 
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
         solver.log_callback = print  # (str)->None
         solver.parameters.num_search_workers = 7
-        #solver.parameters.set_cp_model_presolve = False
+        solver.parameters.random_seed = 42
+        #solver.parameters.max_time_in_seconds = 10.0
+        #solver.parameters.linearization_level = 0
+        # Enumerate all solutions.
+        #solver.parameters.enumerate_all_solutions = True
+        #model.set_cp_model_presolve = False
 
         print(solver.Solve(model))
 
+        #for solver.getiter()
+        #break 
         days = []
         resultado_trabajador = []
         resultado_franja = []
@@ -73,9 +83,15 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         # restults['fecha'] = f"{fecha.year}-{fecha.month:02d}-{fecha.day:02d}"
 
         restults['hora'] = [F2H[f] for f in resultado_franja]
-        restults.to_csv(df_path_out, index=False)
 
-        break
+        dfs_results.append(restults)
+        
+
+        #break
+    dfs_results = pd.concat(dfs_results)
+    dfs_results.to_csv(df_path_out, index=False)
+    
+
 
 def main():
     arguments = docopt(__doc__)

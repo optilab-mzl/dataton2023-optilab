@@ -45,13 +45,16 @@ def schedule_day(df_schedule, day=None, ax=None):
         plt.show()
 
 
-def schedule_week(df_schedule):
+def schedule_week(df_schedule, axes=None):
     df = df_schedule  # No need to create a copy
 
     # Get unique days for iterating
     unique_days = df['dia'].unique()
 
-    fig, axes = plt.subplots(1, 6, figsize=(12, 6), sharey=True)
+    show =False
+    if not any(axes):
+        fig, axes = plt.subplots(1,6,figsize=(8, 9))
+        show =True
 
     for i, day in enumerate(unique_days):
         ax = axes[i]
@@ -59,34 +62,27 @@ def schedule_week(df_schedule):
         schedule_day(df_schedule, day=day, ax=ax)
 
     # Adjust the overall figure layout
+    if show:
+        plt.tight_layout()
+        plt.show()
+
+def schedule_branchs(df_schedule):
+    df = df_schedule  # No need to create a copy
+
+    # Get unique days for iterating
+    branchs = df['suc_cod'].unique()
+
+    fig, axes = plt.subplots(len(branchs), 6, figsize=(12, 6), sharey=True)
+
+    for i, branch in enumerate(branchs):
+        ax = axes[i, :]
+        # Create the heatmap in the current subplot
+        df_schedule_c = df_schedule[df_schedule["suc_cod"]==branch]
+        schedule_week(df_schedule_c, axes=ax)
+
+    # Adjust the overall figure layout
     plt.tight_layout()
     plt.show()
-
-
-# def schedule_day(df_schedule):
-#     df = df_schedule.copy()
-
-#     df['hora_franja'] = df['hora_franja'].apply(lambda x: f"{x}-{F2H[x]}")
-
-#     # Create a pivot table to prepare the data for the heatmap
-#     pivot_df = df.pivot_table(index='hora_franja', 
-#                              columns='documento',
-#                              values='estado', aggfunc='first')
-
-#     # Map categorical values to integers
-#     cmap = sns.color_palette(['green', 'blue', 'red', 'gray'])
-#     state_mapping = {'Trabaja': 0, 'Almuerza': 1, 'Pausa Activa': 2, 'Nada':3}
-#     mapped_data = pivot_df.replace(state_mapping)
-
-#     # Create the heatmapNada
-#     plt.figure(figsize=(8, 9))
-#     sns.heatmap(mapped_data, cmap=cmap, annot=False, fmt='',
-#                  cbar=False, linewidths=0.5)
-
-#     plt.title(f'Cronograma {day}')
-#     plt.xlabel('Empleado')
-#     plt.ylabel('Franja')
-#     plt.show()
 
 
 def load_capacidad_demanda(df_schudel, df_demand):

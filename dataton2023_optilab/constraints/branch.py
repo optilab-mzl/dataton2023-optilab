@@ -33,9 +33,11 @@ def set_branch_contraints(model,damanda, trabajadores,
         for franja in franjas:
             model.AddAtLeastOne(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
     
-    #los saábdos no es todo el día
-    
+    #los sábdos no es todo el día, y debe empezar minimo en las 11
     for franja in franjas[:34]:
         model.AddAtLeastOne(variables[(t, 'Sábado', franja, 'Trabaja')] for t in trabajadores)
+    for t in trabajadores:
+        for franja in franjas[34:]:
+            model.Add(variables[(t, 'Sábado', franja, 'Nada')]==1)
 
     return variables

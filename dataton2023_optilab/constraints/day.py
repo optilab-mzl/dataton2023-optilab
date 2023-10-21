@@ -4,14 +4,14 @@ Constraints for one day of a worker
 import numpy as np 
 
 
-def no_franjas_repetidas(model, variables):
+def solo_un_estado_por_franja(model, variables):
     franjas, posibles_estados = zip(*variables.keys())
 
     franjas = np.unique(franjas)
     posibles_estados = np.unique(posibles_estados)
 
     for franja in franjas:
-        model.Add(sum(variables[(franja, estado)] for estado in posibles_estados) == 1)
+        model.AddExactlyOne(variables[(franja, estado)] for estado in posibles_estados)
 
 
 
@@ -65,6 +65,26 @@ def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
     #model.Add(sum(trabajando.values())==1)
 
 
+def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
+    franjas, _ = zip(*variables.keys())
+    franjas = np.unique(franjas)
+
+    for idx in range(8, len(franjas)-1):
+        #pausa_activa = variables[(franjas[idx], 'Pausa Activa')]
+        sub_franjas = franjas[idx-8: idx]
+        franjas_trabajando = sum(variables[(f, "Trabaja")]  for f in sub_franjas)
+        
+        ocho_franjas = model.NewBoolVar("")
+        model.Add(franjas_trabajando == 8).OnlyEnforceIf(ocho_franjas)
+        model.Add(franjas_trabajando != 8).OnlyEnforceIf(ocho_franjas.Not())
+
+        model.Add(variables[(franjas[idx], "Trabaja")] == 0).OnlyEnforceIf(ocho_franjas)
+        #model.Add(variables[(franjas[idx], "Pausa Activa")] + variables[(franjas[idx], "Almuerza")] >= 1).OnlyEnforceIf#(ocho_franjas)
+        #model.AddAtLeastOne(
+        #   variables[(franjas[idx], "Pausa Activa")], variables[(franjas[idx], "Almuerza")]
+        #   ).OnlyEnforceIf(ocho_franjas)
+        
+
 def pausas_activas(model, variables, numero_de_franjas=38):
     franjas, _ = zip(*variables.keys())
     franjas = np.unique(franjas)
@@ -80,23 +100,6 @@ def pausas_activas(model, variables, numero_de_franjas=38):
         pausa_activa = variables[(franjas[idx], 'Pausa Activa')]
         sub_franjas = franjas[idx: idx+5]
         model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)==4).OnlyEnforceIf(pausa_activa)
-
-
-    for idx in range(len(franjas)):
-        pausa_activa = variables[(franjas[idx], 'Pausa Activa')]
-        sub_franjas = franjas[max(idx-8, 0): idx]
-        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)>=4).OnlyEnforceIf(pausa_activa)
-        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)<=8).OnlyEnforceIf(pausa_activa)
-
-        # Si las anterires fueron ocho franjas de trabajo la siguiente tiene que ser pausa activa o 
-        # almuerzo 
-        ocho_franjas = model.NewBoolVar("")
-        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)==8).OnlyEnforceIf(ocho_franjas)
-        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)!=8).OnlyEnforceIf(ocho_franjas.Not())
-        model.AddAtLeastOne(
-           variables[(franjas[idx], "Pausa Activa")], variables[(franjas[idx], "Almuerza")]
-           ).OnlyEnforceIf(ocho_franjas)
-        
 
     #No puede haber pausas activas en horaio de almuerzo
     if len(franjas)/numero_de_franjas < 2:
@@ -118,7 +121,6 @@ def almuerzo(model, variables):
         model.Add(variables[(f, "Almuerza")]==0)
 
     #continuidad del almuerzo
-    
 
     #sub_franjas = frnajas[16:30]
     almorzando = {}
@@ -138,9 +140,13 @@ def set_constraints_day(model, variables, day,
         # Para tener en cuenta el almuerzo
         numero_franjas_trabajo += 6
 
+    
+    
     # No se admiten franjas repetidas                                    
-    no_franjas_repetidas(model, variables)
-
+    solo_un_estado_por_franja(model, variables)
+    
+    
+                                    
     posible_inicios_de_trabajo(model, variables, day)
 
     # 36 horas de trabajo
@@ -151,8 +157,14 @@ def set_constraints_day(model, variables, day,
     horas_continuas_de_trabajo(model, variables,
                              numero_de_franjas=numero_franjas_trabajo)
 
+    # maximo_ocho_franjas_continuas(model, variables, 
+                                    # numero_de_franjas=numero_franjas_trabajo)
+
     pausas_activas(model, variables,
-                    numero_de_franjas=numero_franjas_trabajo)
+                   numero_de_franjas=numero_franjas_trabajo)
+    
+    maximo_ocho_franjas_continuas(model, variables, 
+                                    numero_de_franjas=numero_franjas_trabajo)
 
     if numero_franjas_trabajo > 20:
         almuerzo(model, variables)
@@ -161,4 +173,5 @@ def set_constraints_day(model, variables, day,
         franjas = np.unique(franjas)
         for f in franjas:
             model.Add(variables[(f, "Almuerza")]==0)
+
 

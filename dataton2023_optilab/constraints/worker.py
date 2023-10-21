@@ -35,10 +35,14 @@ def set_constraints_worker(model, variables, contrato='TC'):
         for day in dasy_no_s[1:]:
             model.Add(variables[(day, f, 'Nada')] == first_value)
 
-    # Almuerzo constante 
-    for f in franjas:
-        first_value = variables[(dasy_no_s[0], f, 'Almuerza')] 
-        for day in dasy_no_s[1:]:
-            model.Add(variables[(day, f, 'Almuerza')] == first_value)
+    # Almuerzo constante para los de tiempo completo
+    if contrato == "TC":
+        for f in franjas:
+            first_value = variables[(dasy_no_s[0], f, 'Almuerza')] 
+            for day in dasy_no_s[1:]:
+                model.Add(variables[(day, f, 'Almuerza')] == first_value)
+
+    
+
 
         
