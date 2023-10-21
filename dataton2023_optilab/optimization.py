@@ -9,7 +9,7 @@ def set_optmization(model, demanda, variables):
     franjas = np.unique(franjas)
     
     restas = []
-    for day in ["Lunes"]:
+    for day in days:
         for franja in franjas:
             trabjadores_en_franja = model.NewIntVar(0, len(trabajadores), '')
             model.Add(trabjadores_en_franja == sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores))

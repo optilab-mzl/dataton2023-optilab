@@ -35,7 +35,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
                                          franjas, posibles_estados)
 
     
-        #set_optmization(model, demanda, variables)
+        set_optmization(model, demanda, variables)
 
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
@@ -85,7 +85,6 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         restults['hora'] = [F2H[f] for f in resultado_franja]
 
         dfs_results.append(restults)
-        
 
         #break
     dfs_results = pd.concat(dfs_results)
