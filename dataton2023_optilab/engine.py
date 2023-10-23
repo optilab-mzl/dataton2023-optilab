@@ -35,15 +35,20 @@ def get_schedule(df_demanda, df_workers, df_path_out):
                                          franjas, posibles_estados)
 
     
-        set_optmization(model, demanda, variables)
+        #set_optmization(model, demanda, variables)
 
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
         solver.log_callback = print  # (str)->None
-        solver.parameters.num_search_workers = 7
+        solver.parameters.num_search_workers = 8
         solver.parameters.random_seed = 42
-        #solver.parameters.max_time_in_seconds = 10.0
-        #solver.parameters.linearization_level = 0
+        solver.parameters.preferred_variable_order = 0
+        #solver.parameters.max_time_in_seconds = 300.0
+        solver.parameters.num_violation_ls = 1
+        
+        #solver.parameters.initial_polarity = 0
+        #model.ExportToFile('some_filename.pbtxt')
+        #solver.parameters.linearization_level = 2
         # Enumerate all solutions.
         #solver.parameters.enumerate_all_solutions = True
         #model.set_cp_model_presolve = False

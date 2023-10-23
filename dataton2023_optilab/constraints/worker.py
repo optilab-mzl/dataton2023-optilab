@@ -16,7 +16,7 @@ def set_constraints_worker(model, variables, contrato='TC'):
         elif contrato == "TC" and day == 'Sábado':
             numero_franjas_trabajo = 20
         else:
-            numero_franjas_trabajo = 32
+            numero_franjas_trabajo = 28
 
         variables_day = {}
         for franja in franjas:

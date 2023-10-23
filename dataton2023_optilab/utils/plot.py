@@ -45,7 +45,7 @@ def schedule_day(df_schedule, day=None, ax=None):
         plt.show()
 
 
-def schedule_week(df_schedule, axes=None):
+def schedule_week(df_schedule, axes=[]):
     df = df_schedule  # No need to create a copy
 
     # Get unique days for iterating
@@ -53,7 +53,7 @@ def schedule_week(df_schedule, axes=None):
 
     show =False
     if not any(axes):
-        fig, axes = plt.subplots(1,6,figsize=(8, 9))
+        fig, axes = plt.subplots(1,6,figsize=(8, 9), sharey=True)
         show =True
 
     for i, day in enumerate(unique_days):

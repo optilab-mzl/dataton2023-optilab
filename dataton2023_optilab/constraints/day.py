@@ -136,16 +136,12 @@ def set_constraints_day(model, variables, day,
                     numero_franjas_trabajo=32):
     
 
-    if numero_franjas_trabajo == 32:
+    if numero_franjas_trabajo > 20:
         # Para tener en cuenta el almuerzo
         numero_franjas_trabajo += 6
 
-    
-    
     # No se admiten franjas repetidas                                    
     solo_un_estado_por_franja(model, variables)
-    
-    
                                     
     posible_inicios_de_trabajo(model, variables, day)
 
