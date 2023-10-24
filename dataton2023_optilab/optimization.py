@@ -39,17 +39,18 @@ def set_optmization(model, demanda, variables):
     franjas = np.unique(franjas)
     
     restas = []
-    for franja in franjas:
+    for day in days: 
+        for franja in franjas:
 
-        demanda_days_franja = sum(demanda[day][franja] for day in days)
+            demanda_day_franja = demanda[day][franja]#sum(demanda[day][franja] for day in days)
 
-        trabjadores_en_franja = sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores for day in days)
-        
-        resta = model.NewIntVar(0, demanda_days_franja, '')
-        damanda_menos_resta = demanda_days_franja - trabjadores_en_franja
-        
-        model.AddMaxEquality(resta, [0, damanda_menos_resta])
-        restas.append(resta)
+            trabjadores_en_franja = sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
+            
+            resta = model.NewIntVar(0, demanda_day_franja, '')
+            damanda_menos_resta = demanda_day_franja - trabjadores_en_franja
+            
+            model.AddMaxEquality(resta, [0, damanda_menos_resta])
+            restas.append(resta)
     
     
     objetivo = sum(restas)

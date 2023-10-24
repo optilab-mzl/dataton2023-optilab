@@ -50,7 +50,6 @@ def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
     posibles_estados = list(posibles_estados)
     posibles_estados.remove('Nada')
     
-
     trabajando = {}
     for idx in range(len(franjas)-numero_de_franjas + 1):
         sub_franjas = franjas[idx:idx+numero_de_franjas]
@@ -69,7 +68,7 @@ def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
     franjas, _ = zip(*variables.keys())
     franjas = np.unique(franjas)
 
-    for idx in range(8, len(franjas)-1):
+    for idx in range(8, len(franjas)):
         #pausa_activa = variables[(franjas[idx], 'Pausa Activa')]
         sub_franjas = franjas[idx-8: idx]
         franjas_trabajando = sum(variables[(f, "Trabaja")]  for f in sub_franjas)
@@ -114,8 +113,19 @@ def almuerzo(model, variables):
 
     hay_almuerzo = model.NewBoolVar("")
     model.Add(sum(variables[(f, "Almuerza")] for f in franjas) >= 1).OnlyEnforceIf(hay_almuerzo)
-    model.Add(sum(variables[(f, "Almuerza")] for f in franjas) == 1).OnlyEnforceIf(hay_almuerzo.Not())
+    model.Add(sum(variables[(f, "Almuerza")] for f in franjas) < 1).OnlyEnforceIf(hay_almuerzo.Not())
     model.Add(sum(variables[(f, "Almuerza")] for f in franjas[16:30]) == 6).OnlyEnforceIf(hay_almuerzo)
+
+    # # Debe haber como m´inimo 4 franjas antes de almuerzo
+    for idx in range(1,len(franjas)-1):
+
+        inicio_almuerzo = model.NewBoolVar("")
+        patron_iniciando_almuerzo = sum((variables[(franjas[idx-1], 'Trabaja')], variables[(franjas[idx], 'Almuerza')], variables[(franjas[idx+1], 'Almuerza')]))
+        model.Add(patron_iniciando_almuerzo == 3).OnlyEnforceIf(inicio_almuerzo)
+        model.Add(patron_iniciando_almuerzo != 3).OnlyEnforceIf(inicio_almuerzo.Not())
+
+        sub_franjas = franjas[max(idx-4, 0): idx]
+        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)==4).OnlyEnforceIf(inicio_almuerzo)
 
     for f in  [*franjas[:16],*franjas[30:]]:
         model.Add(variables[(f, "Almuerza")]==0)
@@ -169,5 +179,9 @@ def set_constraints_day(model, variables, day,
         franjas = np.unique(franjas)
         for f in franjas:
             model.Add(variables[(f, "Almuerza")]==0)
+
+    if day == "Sábado":
+        for f in franjas[29:]:
+            model.Add(variables[(f, "Trabaja")]==0)
 
 

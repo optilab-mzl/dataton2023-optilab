@@ -43,7 +43,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         solver.parameters.num_search_workers = 8
         solver.parameters.random_seed = 42
         solver.parameters.preferred_variable_order = 0
-        #solver.parameters.max_time_in_seconds = 300.0
+        solver.parameters.max_time_in_seconds = 300.0
         solver.parameters.num_violation_ls = 1
         
         #solver.parameters.initial_polarity = 0
@@ -88,6 +88,12 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         # restults['fecha'] = f"{fecha.year}-{fecha.month:02d}-{fecha.day:02d}"
 
         restults['hora'] = [F2H[f] for f in resultado_franja]
+        
+        # eliminar el horario no posoble del sabaado
+
+        #mask = (restults['hora_franja'] < 64) & (restults['dia'] != 'Sábado')
+        
+        #restults = restults[mask]
 
         dfs_results.append(restults)
 
