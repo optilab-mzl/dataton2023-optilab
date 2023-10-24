@@ -17,6 +17,7 @@ from .optimization import set_optmization
 def get_schedule(df_demanda, df_workers, df_path_out):
     
     dfs_results = []
+    best_objective = []
     for branch in df_workers['suc_cod'].unique():
 
         print("#"*20,branch,"#"*20)
@@ -35,7 +36,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
                                          franjas, posibles_estados)
 
     
-        #set_optmization(model, demanda, variables)
+        set_optmization(model, demanda, variables)
 
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
@@ -43,7 +44,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         solver.parameters.num_search_workers = 8
         solver.parameters.random_seed = 42
         solver.parameters.preferred_variable_order = 0
-        solver.parameters.max_time_in_seconds = 300.0
+        solver.parameters.max_time_in_seconds = 120.0
         solver.parameters.num_violation_ls = 1
         
         #solver.parameters.initial_polarity = 0
@@ -54,7 +55,8 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         #model.set_cp_model_presolve = False
 
         print(solver.Solve(model))
-
+        best_bound = solver.ObjectiveValue()
+        best_objective.append(best_bound)
         #for solver.getiter()
         #break 
         days = []
@@ -100,6 +102,7 @@ def get_schedule(df_demanda, df_workers, df_path_out):
         #break
     dfs_results = pd.concat(dfs_results)
     dfs_results.to_csv(df_path_out, index=False)
+    print(sum(best_objective), best_objective)
     
 
 
