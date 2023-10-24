@@ -7,4 +7,4 @@ df = df[~mask]
 
 df = df.drop(columns=['dia'])
 
-df.to_csv('base_out.csv', index=False)
+df.to_csv('2624.csv', index=False)

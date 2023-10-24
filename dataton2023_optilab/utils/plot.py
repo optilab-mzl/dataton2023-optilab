@@ -155,7 +155,8 @@ def main():
     # df_demand = pd.read_excel("/home/juan/dev/dataton2023-optilab/data/Dataton 2023 Etapa 1.xlsx", sheet_name="demand")
     # workers = pd.read_excel("/home/juan/dev/dataton2023-optilab/data/Dataton 2023 Etapa 1.xlsx", sheet_name="workers")
     if not day:
-        schedule_week(df_schudel)
+        #schedule_week(df_schudel)
+        schedule_branchs(df_schudel)
     elif day:
         schedule_day(df_schudel, day)
 

@@ -42,26 +42,43 @@ def horas_de_trabajo(model, variables, numero_de_franjas=38):
             model.Add(variables[(f, 'Nada')]==0)
 
 
+# def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
+#     franjas, posibles_estados = zip(*variables.keys())
+    
+#     franjas = np.unique(franjas)
+#     posibles_estados = np.unique(posibles_estados)
+#     posibles_estados = list(posibles_estados)
+#     posibles_estados.remove('Nada')
+    
+#     trabajando = {}
+#     for idx in range(len(franjas)-numero_de_franjas + 1):
+
+#         sub_franjas = franjas[idx:idx+numero_de_franjas]
+#         print(len(sub_franjas), numero_de_franjas)
+        
+#         trabajando[idx] = model.NewBoolVar("")
+#         model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)==numero_de_franjas).OnlyEnforceIf(trabajando[idx])
+#         model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)!=numero_de_franjas).OnlyEnforceIf(trabajando[idx].Not())
+
+#     #model.AddBoolXOr(trabajando.values())
+#     #model.AddAtMostOne(trabajando.values())
+#     #model.AddAtLeastOne(trabajando.values())
+#     model.AddExactlyOne(trabajando.values())
+
+
 def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
-    franjas, posibles_estados = zip(*variables.keys())
+    franjas, _ = zip(*variables.keys())
     
     franjas = np.unique(franjas)
-    posibles_estados = np.unique(posibles_estados)
-    posibles_estados = list(posibles_estados)
-    posibles_estados.remove('Nada')
-    
     trabajando = {}
-    for idx in range(len(franjas)-numero_de_franjas + 1):
+    for idx in range(len(franjas)-numero_de_franjas):
         sub_franjas = franjas[idx:idx+numero_de_franjas]
-        
         trabajando[idx] = model.NewBoolVar("")
-        model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)==numero_de_franjas).OnlyEnforceIf(trabajando[idx])
-        model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)!=numero_de_franjas).OnlyEnforceIf(trabajando[idx].Not())
+        model.Add(sum(variables[(f, "Nada")] for f in sub_franjas)==0).OnlyEnforceIf(trabajando[idx])
+        model.Add(sum(variables[(f, "Nada")] for f in sub_franjas)!=0).OnlyEnforceIf(trabajando[idx].Not())
+    model.AddExactlyOne(trabajando.values())
 
-    #model.AddBoolXOr(trabajando.values())
-    model.AddAtMostOne(trabajando.values())
-    model.AddAtLeastOne(trabajando.values())
-    #model.Add(sum(trabajando.values())==1)
+
 
 
 def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
@@ -82,6 +99,8 @@ def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
         #model.AddAtLeastOne(
         #   variables[(franjas[idx], "Pausa Activa")], variables[(franjas[idx], "Almuerza")]
         #   ).OnlyEnforceIf(ocho_franjas)
+
+
         
 
 def pausas_activas(model, variables, numero_de_franjas=38):
@@ -139,7 +158,7 @@ def almuerzo(model, variables):
         almorzando[idx] = model.NewBoolVar("")
         model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)==6).OnlyEnforceIf(almorzando[idx])
         model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)!=6).OnlyEnforceIf(almorzando[idx].Not())
-    model.AddBoolXOr(almorzando.values())
+    model.AddExactlyOne(almorzando.values())
 
 
 def set_constraints_day(model, variables, day, 
@@ -152,8 +171,9 @@ def set_constraints_day(model, variables, day,
 
     # No se admiten franjas repetidas                                    
     solo_un_estado_por_franja(model, variables)
-                                    
-    posible_inicios_de_trabajo(model, variables, day)
+
+    #no es necesario tener en ceenta esto debido al que se pone el inicio y el final de la jornada                                
+    #posible_inicios_de_trabajo(model, variables, day)
 
     # 36 horas de trabajo
     horas_de_trabajo(model, variables,

@@ -4,6 +4,7 @@ Generates schedule for workers
 Usage:
   get_schedule <excel_path> <output_path>
 """
+
 from docopt import docopt
 import pandas as pd
 from .utils.time import F2H, FRANJAS
@@ -37,19 +38,21 @@ def get_schedule(df_demanda, df_workers, df_path_out):
 
     
         set_optmization(model, demanda, variables)
-
+        # 2678.0 [418.0, 843.0, 760.0, 228.0, 429.0]
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
         solver.log_callback = print  # (str)->None
-        solver.parameters.num_search_workers = 8
+        solver.parameters.num_search_workers = 0
         solver.parameters.random_seed = 42
         solver.parameters.preferred_variable_order = 0
-        solver.parameters.max_time_in_seconds = 120.0
+        solver.parameters.max_time_in_seconds = 350
+        solver.parameters.detect_table_with_cost = True
+        solver.parameters.linearization_level = 1
+        #solver.parameters.use_lns_only = True 
         solver.parameters.num_violation_ls = 1
         
-        #solver.parameters.initial_polarity = 0
+        solver.parameters.initial_polarity = 1
         #model.ExportToFile('some_filename.pbtxt')
-        #solver.parameters.linearization_level = 2
         # Enumerate all solutions.
         #solver.parameters.enumerate_all_solutions = True
         #model.set_cp_model_presolve = False
