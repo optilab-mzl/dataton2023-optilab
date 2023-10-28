@@ -1,8 +1,11 @@
 from .worker import set_constraints_worker
+from ..utils.time import FRANJAS, POSIBLES_ESTADOS
 
 
-def set_branch_contraints(model,damanda, trabajadores,
-                        franjas, posibles_estados):
+def set_branch_contraints(model, damanda, trabajadores):
+
+    franjas = FRANJAS
+    posibles_estados = POSIBLES_ESTADOS
     
     days = damanda.keys()
     variables = {}
@@ -27,18 +30,9 @@ def set_branch_contraints(model,damanda, trabajadores,
     
 
     # Debe haber por lo menos un trabajador en cada franja horaria que tenga una demanda mayor o igual a uno
-    #dasy_no_s = list(days)
-    #dasy_no_s.remove('Sábado')
     for day in days:
         for franja in franjas:
             if damanda[day][franja] >= 1:
                 model.AddAtLeastOne(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
-    
-    #los sábdos no es todo el día, y debe empezar minimo en las 11
-    # for franja in franjas[:34]:
-    #     model.AddAtLeastOne(variables[(t, 'Sábado', franja, 'Trabaja')] for t in trabajadores)
-    # for t in trabajadores:
-    #     for franja in franjas[34:]:
-    #         model.Add(variables[(t, 'Sábado', franja, 'Nada')]==1)
 
     return variables

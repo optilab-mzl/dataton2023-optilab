@@ -42,29 +42,6 @@ def horas_de_trabajo(model, variables, numero_de_franjas=38):
             model.Add(variables[(f, 'Nada')]==0)
 
 
-# def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
-#     franjas, posibles_estados = zip(*variables.keys())
-    
-#     franjas = np.unique(franjas)
-#     posibles_estados = np.unique(posibles_estados)
-#     posibles_estados = list(posibles_estados)
-#     posibles_estados.remove('Nada')
-    
-#     trabajando = {}
-#     for idx in range(len(franjas)-numero_de_franjas + 1):
-
-#         sub_franjas = franjas[idx:idx+numero_de_franjas]
-#         print(len(sub_franjas), numero_de_franjas)
-        
-#         trabajando[idx] = model.NewBoolVar("")
-#         model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)==numero_de_franjas).OnlyEnforceIf(trabajando[idx])
-#         model.Add(sum(variables[(f, e)] for e in posibles_estados for f in sub_franjas)!=numero_de_franjas).OnlyEnforceIf(trabajando[idx].Not())
-
-#     #model.AddBoolXOr(trabajando.values())
-#     #model.AddAtMostOne(trabajando.values())
-#     #model.AddAtLeastOne(trabajando.values())
-#     model.AddExactlyOne(trabajando.values())
-
 
 def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
     franjas, _ = zip(*variables.keys())
@@ -80,13 +57,11 @@ def horas_continuas_de_trabajo(model, variables, numero_de_franjas=38):
 
 
 
-
 def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
     franjas, _ = zip(*variables.keys())
     franjas = np.unique(franjas)
 
     for idx in range(8, len(franjas)):
-        #pausa_activa = variables[(franjas[idx], 'Pausa Activa')]
         sub_franjas = franjas[idx-8: idx]
         franjas_trabajando = sum(variables[(f, "Trabaja")]  for f in sub_franjas)
         
@@ -95,13 +70,7 @@ def maximo_ocho_franjas_continuas(model, variables, numero_de_franjas=38):
         model.Add(franjas_trabajando != 8).OnlyEnforceIf(ocho_franjas.Not())
 
         model.Add(variables[(franjas[idx], "Trabaja")] == 0).OnlyEnforceIf(ocho_franjas)
-        #model.Add(variables[(franjas[idx], "Pausa Activa")] + variables[(franjas[idx], "Almuerza")] >= 1).OnlyEnforceIf#(ocho_franjas)
-        #model.AddAtLeastOne(
-        #   variables[(franjas[idx], "Pausa Activa")], variables[(franjas[idx], "Almuerza")]
-        #   ).OnlyEnforceIf(ocho_franjas)
 
-
-        
 
 def pausas_activas(model, variables, numero_de_franjas=38):
     franjas, _ = zip(*variables.keys())
@@ -122,7 +91,7 @@ def pausas_activas(model, variables, numero_de_franjas=38):
     #No puede haber pausas activas en horaio de almuerzo
     if len(franjas)/numero_de_franjas < 2:
         for f in franjas[20:26]:
-            model.Add(variables[(f, "Pausa Activa")]==0)
+            model.Add(variables[(f, "Pausa Activa")] == 0)
 
 
 def almuerzo(model, variables):
@@ -130,10 +99,7 @@ def almuerzo(model, variables):
     franjas, _ = zip(*variables.keys())
     franjas = np.unique(franjas)
 
-    hay_almuerzo = model.NewBoolVar("")
-    model.Add(sum(variables[(f, "Almuerza")] for f in franjas) >= 1).OnlyEnforceIf(hay_almuerzo)
-    model.Add(sum(variables[(f, "Almuerza")] for f in franjas) < 1).OnlyEnforceIf(hay_almuerzo.Not())
-    model.Add(sum(variables[(f, "Almuerza")] for f in franjas[16:30]) == 6).OnlyEnforceIf(hay_almuerzo)
+    model.Add(sum(variables[(f, "Almuerza")] for f in franjas[16:30]) == 6)
 
     # # Debe haber como m´inimo 4 franjas antes de almuerzo
     for idx in range(1,len(franjas)-1):
@@ -149,15 +115,13 @@ def almuerzo(model, variables):
     for f in  [*franjas[:16],*franjas[30:]]:
         model.Add(variables[(f, "Almuerza")]==0)
 
-    #continuidad del almuerzo
-
-    #sub_franjas = frnajas[16:30]
+    _franjas = franjas[16:30]
     almorzando = {}
-    for idx in range(len(franjas)-5):
-        sub_franjas = franjas[idx:idx+6]
-        almorzando[idx] = model.NewBoolVar("")
-        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)==6).OnlyEnforceIf(almorzando[idx])
-        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)!=6).OnlyEnforceIf(almorzando[idx].Not())
+    for i, idx in enumerate(_franjas):
+        sub_franjas = _franjas[i:i+6]
+        almorzando[i] = model.NewBoolVar("")
+        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)==6).OnlyEnforceIf(almorzando[i])
+        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)!=6).OnlyEnforceIf(almorzando[i].Not())
     model.AddExactlyOne(almorzando.values())
 
 

@@ -4,16 +4,15 @@ Generates schedule for workers
 Usage:
   get_schedule <excel_path> <output_path>
 """
-
 from docopt import docopt
 import pandas as pd
-from .utils.time import F2H, FRANJAS
 from .utils.load import load_demanda, load_workers
 from ortools.sat.python import cp_model
-#from .constraints import set_program_workers_constraints, set_optmization
-
+from .utils.callbacks import SolutionPrinter
 from .constraints.branch import set_branch_contraints
 from .optimization import set_optmization
+from .utils.results_to_dataframe import results_to_dataframe
+
 
 def get_schedule(df_demanda, df_workers, df_path_out):
     
@@ -21,7 +20,8 @@ def get_schedule(df_demanda, df_workers, df_path_out):
     best_objective = []
     for branch in df_workers['suc_cod'].unique():
 
-        print("#"*20,branch,"#"*20)
+        print("#"*20, branch, "#"*20)
+
         df_d = df_demanda[df_demanda['suc_cod']==branch]
         df_w = df_workers[df_workers['suc_cod']==branch]
         
@@ -30,84 +30,43 @@ def get_schedule(df_demanda, df_workers, df_path_out):
 
         model = cp_model.CpModel()
 
-        franjas = FRANJAS
-        posibles_estados = ["Trabaja", "Pausa Activa", "Almuerza", "Nada"]
-        
-        variables = set_branch_contraints(model, demanda, trabajadores,
-                                         franjas, posibles_estados)
+        variables = set_branch_contraints(model, demanda, trabajadores)
 
-    
         set_optmization(model, demanda, variables)
-        # 2678.0 [418.0, 843.0, 760.0, 228.0, 429.0]
         solver = cp_model.CpSolver()
         solver.parameters.log_search_progress = True
         solver.log_callback = print  # (str)->None
         solver.parameters.num_search_workers = 0
         solver.parameters.random_seed = 42
         solver.parameters.preferred_variable_order = 0
-        solver.parameters.max_time_in_seconds = 350
+        solver.parameters.max_time_in_seconds = 360
         solver.parameters.detect_table_with_cost = True
         solver.parameters.linearization_level = 1
+        #solver.parameters.search_branching = cp_model.FIXED_SEARCH
         #solver.parameters.use_lns_only = True 
         solver.parameters.num_violation_ls = 1
-        
         solver.parameters.initial_polarity = 1
         #model.ExportToFile('some_filename.pbtxt')
         # Enumerate all solutions.
         #solver.parameters.enumerate_all_solutions = True
-        #model.set_cp_model_presolve = False
+        model.set_cp_model_presolve = True
+        max_no_improvement=10
+        solution_printer = SolutionPrinter(model, max_no_improvement)
+        status = solver.SolveWithSolutionCallback(model, solution_printer)
 
-        print(solver.Solve(model))
+        print(status)
         best_bound = solver.ObjectiveValue()
         best_objective.append(best_bound)
-        #for solver.getiter()
-        #break 
-        days = []
-        resultado_trabajador = []
-        resultado_franja = []
-        resultado_estado = []
-        fechas = []
-        for i, day in enumerate(demanda.keys()):
-            for trabajador in trabajadores:
-                for franja in franjas:
-                    for estado in posibles_estados:
-                        if solver.Value(variables[(trabajador,day,franja, estado)]) == 1:
-                            resultado_franja.append(franja)
-                            resultado_estado.append(estado)
-                            resultado_trabajador.append(trabajador)
-                            days.append(day)
-                            fechas.append(day2date[day])
 
-
-        restults = pd.DataFrame({
-                        'dia':days,
-                        'hora_franja':resultado_franja,
-                        'estado':resultado_estado,
-                        'documento':resultado_trabajador,
-                        'fecha': fechas
-                        })
-                        
-        restults['suc_cod'] = branch
-
-        # fecha = df_demanda['fecha_hora'].iloc[0]
-        # restults['fecha'] = f"{fecha.year}-{fecha.month:02d}-{fecha.day:02d}"
-
-        restults['hora'] = [F2H[f] for f in resultado_franja]
+        results = results_to_dataframe(solver, variables, day2date)
         
-        # eliminar el horario no posoble del sabaado
+        results['suc_cod'] = branch
+        dfs_results.append(results)
 
-        #mask = (restults['hora_franja'] < 64) & (restults['dia'] != 'Sábado')
-        
-        #restults = restults[mask]
-
-        dfs_results.append(restults)
-
-        #break
     dfs_results = pd.concat(dfs_results)
     dfs_results.to_csv(df_path_out, index=False)
     print(sum(best_objective), best_objective)
-    
-
+     
 
 def main():
     arguments = docopt(__doc__)

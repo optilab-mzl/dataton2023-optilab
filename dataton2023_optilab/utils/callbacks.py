@@ -1,5 +1,6 @@
 from ortools.sat.python import cp_model
 
+
 class SolutionPrinter(cp_model.CpSolverSolutionCallback):
     def __init__(self, model, max_no_improvement):
         cp_model.CpSolverSolutionCallback.__init__(self)
@@ -22,28 +23,20 @@ class SolutionPrinter(cp_model.CpSolverSolutionCallback):
             print(f"Terminating the solver after {self.no_improvement_count} iterations without improvement.")
             self.StopSearch()
 
-def main():
-    model = cp_model.CpModel()
 
-    # Define your variables and constraints here
+class TimeoutCallback(cp_model.CpSolverSolutionCallback):
+    def __init__(self, time_limit_seconds):
+        cp_model.CpSolverSolutionCallback.__init__(self)
+        self.time_limit_seconds = time_limit_seconds
+        self.start_time = 0
 
-    solver = cp_model.CpSolver()
-    
-    max_no_improvement = 100  # Adjust the number of iterations without improvement as needed
-
-    solution_printer = SolutionPrinter(model, max_no_improvement)
-    status = solver.SolveWithSolutionCallback(model, solution_printer)
-
-    if status == cp_model.OPTIMAL:
-        print("Optimal solution found.")
-    elif status == cp_model.FEASIBLE:
-        print("Feasible solution found.")
-    elif status == cp_model.INFEASIBLE:
-        print("No solution exists.")
-    elif status == cp_model.MODEL_INVALID:
-        print("Invalid model.")
-    else:
-        print("Solver ran to completion without finding a solution.")
-
-if __name__ == "__main__":
-    main()
+    def on_solution_callback(self):
+        if self.ObjectiveValue() == self.best_objective_value:
+            # No improvement in the best solution.
+            elapsed_time = time.time() - self.start_time
+            if elapsed_time >= self.time_limit_seconds:
+                self.StopSearch()
+        else:
+            # Update the best objective value and reset the timer.
+            self.best_objective_value = self.ObjectiveValue()
+            self.start_time = time.time()
