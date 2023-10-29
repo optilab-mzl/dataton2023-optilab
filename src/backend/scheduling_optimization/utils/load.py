@@ -1,27 +1,35 @@
 from .time import H2F, DAYS2DIAS
+from datetime import datetime
 
 
-def load_demanda(df, return_day2date=False, complete_franjas=True):
-    demanda = {}
+def load_demanda(demanda, return_day2date=False, complete_franjas=True):
+    demanda_results = {}
     day2date = {}
-    for index, row in df.iterrows():
-        fecha = row.fecha_hora
+    for record in demanda:
+        #fecha = datetime.strptime(record['fecha_hora'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        fecha = datetime.fromisoformat(record['fecha_hora'])
+        print(fecha)
         dia_semana = DAYS2DIAS[fecha.strftime("%A")]
-        demanda.setdefault(dia_semana, {})
+        demanda_results.setdefault(dia_semana, {})
         franja =  f"{fecha.hour:02d}:{fecha.minute:02d}"
-        demanda[dia_semana][H2F[franja]] = row.demanda
+        demanda_results[dia_semana][H2F[franja]] = record['demanda']
         day2date[dia_semana] = f"{fecha.year}-{fecha.month:02d}-{fecha.day:02d}"
-
+    
     if complete_franjas:
         for f in H2F.values():
-            if f not in demanda['Sábado']:
-                demanda['Sábado'][f] = 0
+            if f not in demanda_results['Sábado']:
+                demanda_results['Sábado'][f] = 0
 
     if return_day2date:
-        return demanda, day2date
+        return demanda_results, day2date
         
-    return demanda
+    return demanda_results
 
 
-def load_workers(df):
-    return df.set_index('documento')['contrato'].to_dict()
+def load_workers(trabajadores):
+    trabajadores_results = {}
+    for record in trabajadores:
+        documento = record['documento']
+        contrato = record['contrato']
+        trabajadores_results[documento] = contrato
+    return trabajadores_results
