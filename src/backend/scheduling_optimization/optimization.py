@@ -18,8 +18,6 @@ Donde:
 - :math:`d` : Día de la semana.
 - :math:`f` : Franja del día.
 - :math:`t` : Trabjador.
-- :math:`\\text{demanda}_{i,t}` : Demanda de personal en la franja horaria :math:`i` y tiempo :math:`t`
-- :math:`\\text{capacidad}_{i,t}` : Capacidad de personal en la franja horaria :math:`i` y tiempo :math:`t`
 """
 import numpy as np 
 from ortools.sat.python import cp_model
