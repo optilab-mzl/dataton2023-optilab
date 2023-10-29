@@ -2,7 +2,6 @@ from docopt import docopt
 import pandas as pd
 from .utils.load import load_demanda, load_workers
 from ortools.sat.python import cp_model
-from .utils.callbacks import SolutionPrinter
 from .constraints.branch import set_branch_contraints
 from .optimization import set_optmization
 from .utils.results_to_dataframe import results_to_dataframe
@@ -29,13 +28,13 @@ def get_schedule(demanda, trabajadores):
     solver.parameters.num_violation_ls = 1
     solver.parameters.initial_polarity = 1
     model.set_cp_model_presolve = True
-    max_no_improvement = 10
-    solution_printer = SolutionPrinter(model, max_no_improvement)
-    status = solver.SolveWithSolutionCallback(model, solution_printer)
+    status = solver.Solve(model)
     print(status)
     best_bound = solver.ObjectiveValue()
-    best_objective.append(best_bound)
     results = results_to_dataframe(solver, variables, day2date)
-
-    return results.to_json(orient="records", date_format='iso', index=False)
+    
+    results_dict = results.to_json(orient="records", 
+                                   date_format='iso', index=False)
+                                   
+    return results_dict, best_bound
 

@@ -6,9 +6,7 @@ def load_demanda(demanda, return_day2date=False, complete_franjas=True):
     demanda_results = {}
     day2date = {}
     for record in demanda:
-        #fecha = datetime.strptime(record['fecha_hora'], '%Y-%m-%dT%H:%M:%S.%fZ')
         fecha = datetime.fromisoformat(record['fecha_hora'])
-        print(fecha)
         dia_semana = DAYS2DIAS[fecha.strftime("%A")]
         demanda_results.setdefault(dia_semana, {})
         franja =  f"{fecha.hour:02d}:{fecha.minute:02d}"
