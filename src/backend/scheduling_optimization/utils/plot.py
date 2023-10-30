@@ -1,8 +1,17 @@
 """
-Generates plots
+Genera gráficos de programación y capacidad vs. demanda.
 
 Usage:
-  get_plot <type> <input_csv> <suc_cod> [--day=<day>] [--demand_csv=demand_csv]
+  get_plot <tipo> <archivo_csv> <código_sucursal> [--dia=<día>] [--demand_csv=archivo_demanda]
+
+Arguments:
+  <tipo>              Tipo de gráfico que se generará. Puede ser "schedule" para gráficos de programación o "capacity_vs_demand" para gráficos de capacidad vs. demanda.
+  <archivo_csv>       Ruta al archivo CSV que contiene los datos de programación.
+  <código_sucursal>   Código de la sucursal para la cual se generará el gráfico.
+  
+Options:
+  --dia=<día>                     (Opcional) Día específico para el que se generará un gráfico de programación.
+  --demand_csv=archivo_demanda    (Opcional) Ruta al archivo de demanda (en formato Excel) que se utilizará para gráficos de capacidad vs. demanda.
 """
 from docopt import docopt
 import matplotlib.pyplot as plt
@@ -10,11 +19,12 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 from .time import F2H, DAYS2DIAS
-from .load import load_demanda
+from .load import transform_demanda
 from datetime import datetime
 from matplotlib.ticker import MaxNLocator
+import matplotlib.pyplot as plt
 
-
+# Constante que mapea días de la semana a números para ordenarlos
 VALORES_DIAS = {
     "Lunes": 1,
     "Martes": 2,
@@ -25,7 +35,26 @@ VALORES_DIAS = {
 }
 
 
-def schedule_day(df_schedule, day=None, ax=None, title=None):
+def schedule_day(df_schedule: pd.DataFrame, day: str = None, 
+                 ax: plt.Axes = None, title: str = None) -> None:
+     """
+    Genera un gráfico de programación para un día específico.
+
+    Parámetros
+    ----------
+    df_schedule : pd.DataFrame
+        El DataFrame que contiene los datos de programación.
+    day : str, opcional
+        El día para el cual se generará el gráfico de programación.
+    ax : plt.Axes, opcional
+        El eje en el que se dibujará el gráfico.
+    title : str, opcional
+        El título del gráfico.
+
+    Retorno
+    -------
+    None
+    """
     df = df_schedule.copy()
     if day:
         df = df[df['dia']==day]
@@ -58,7 +87,24 @@ def schedule_day(df_schedule, day=None, ax=None, title=None):
         plt.show()
 
 
-def schedule_week(df_schedule, axes=[], title=None):
+def schedule_week(df_schedule: pd.DataFrame,
+                  axes: list = [], title: str = None) -> None:
+    """
+    Genera gráficos de programación para toda la semana.
+
+    Parámetros
+    ----------
+    df_schedule : pd.DataFrame
+        El DataFrame que contiene los datos de programación.
+    axes : list, opcional
+        Una lista de ejes en la que se dibujarán los gráficos diarios.
+    title : str, opcional
+        El título de los gráficos.
+
+    Retorno
+    -------
+    None
+    """
     df = df_schedule  # No need to create a copy
 
     # Get unique days for iterating
@@ -82,15 +128,54 @@ def schedule_week(df_schedule, axes=[], title=None):
         plt.show()
 
 
-def load_capacidad_demanda(df_schedule, df_demand):
+def load_capacidad_demanda(df_schedule: pd.DataFrame,
+                           df_demand: pd.DataFrame
+                           ) -> (pd.Series, dict):
+    """
+    Carga datos de capacidad y demanda para su posterior representación en gráficos.
+
+    Parámetros
+    ----------
+    df_schedule : pd.DataFrame
+        El DataFrame que contiene los datos de programación.
+    df_demand : pd.DataFrame
+        El DataFrame que contiene los datos de demanda.
+
+    Retorno
+    -------
+    capacidad : pd.Series
+        Datos de capacidad.
+    demanda : dict
+        Datos de demanda.
+    """
     df = df_schedule[['hora_franja','estado']].copy()
     df['estado'] = df['estado'] == "Trabaja"
-    capacidad =df.groupby('hora_franja').sum()
-    demanda = load_demanda(df_demand)
+    capacidad = df.groupby('hora_franja').sum()
+    demanda = transform_demanda(df_demand)
     return capacidad, demanda
 
 
-def plot_capacidad_vs_demand(capacidad, demanda, ax, title=None):
+def plot_capacidad_vs_demand(capacidad: pd.Series,
+                             demanda: dict, ax: plt.Axes,
+                             title: str = None) -> None:
+    """
+    Genera un gráfico de capacidad vs. demanda para un día específico.
+
+    Parámetros
+    ----------
+    capacidad : pd.Series
+        Datos de capacidad.
+    demanda : dict
+        Datos de demanda.
+    ax : matplotlib.axes._subplots.AxesSubplot
+        El eje en el que se dibujará el gráfico.
+    title : str, opcional
+        El título del gráfico.
+
+    Retorno
+    -------
+    None
+    """
     # Plot 'oferta' data asb ars
     hora = [F2H[f] for f in demanda.keys()]
     ax.step(hora[:len(capacidad)], capacidad['estado'], label='Capacidad', color='red',
@@ -104,9 +189,26 @@ def plot_capacidad_vs_demand(capacidad, demanda, ax, title=None):
     ax.xaxis.set_major_locator(MaxNLocator(integer=True, prune='both'))
 
     
-def capacidad_vs_demanda(df_schedule, df_demand, title=None):
+def capacidad_vs_demanda(df_schedule: pd.DataFrame,
+                         df_demand: pd.DataFrame,
+                         title: str = None) -> None:
+    """
+    Genera gráficos de capacidad vs. demanda para toda la semana.
 
-    demanda_days = load_demanda(df_demand, complete_franjas=False)
+    Parámetros
+    ----------
+    df_schedule : pd.DataFrame
+        El DataFrame que contiene los datos de programación.
+    df_demand : pd.DataFrame
+        El DataFrame que contiene los datos de demanda.
+    title : str, opcional
+        El título de los gráficos.
+
+    Retorno
+    -------
+    None
+    """
+    demanda_days = transform_demanda(df_demand, complete_franjas=False)
 
     fig, axes = plt.subplots(2, 6, figsize=(15, 5), sharex=True)
 
@@ -140,8 +242,24 @@ def capacidad_vs_demanda(df_schedule, df_demand, title=None):
     plt.show()
 
 
-def plot_diff_capacidad_vs_demanda(capacidad, demanda, ax):
+def plot_diff_capacidad_vs_demanda(capacidad: pd.Series, demanda:dict,
+                                   ax: plt.Axes) -> None:
+    """
+    Genera un gráfico de diferencias entre capacidad y demanda para un día específico.
 
+    Parámetros
+    ----------
+    capacidad : pd.Series
+        Datos de capacidad.
+    demanda : dict
+        Datos de demanda.
+    ax : matplotlib.axes._subplots.AxesSubplot
+        El eje en el que se dibujará el gráfico.
+
+    Retorno
+    -------
+    None
+    """
     hora = [F2H[f] for f in demanda.keys()]
     diff = np.array(list(demanda.values()) - capacidad['estado'])
     colors = ['red' if val < 0 else 'blue' for val in diff]
@@ -157,7 +275,20 @@ def plot_diff_capacidad_vs_demanda(capacidad, demanda, ax):
     ax.xaxis.set_major_locator(MaxNLocator(integer=True, prune='both'))
     
 
-def transform_date(df):
+def transform_date(df: pd.DataFrame) -> pd.DataFrame:
+     """
+    Transforma la fecha en el DataFrame para su posterior uso en los gráficos.
+
+    Parámetros
+    ----------
+    df : pd.DataFrame
+        El DataFrame que contiene los datos.
+
+    Retorno
+    -------
+    df : pd.DataFrame
+        El DataFrame con la fecha transformada.
+    """
     dateparse = lambda x: datetime.strptime(x, '%Y-%m-%d')
     df['fecha'] = df['fecha'].apply(dateparse)
     df['dia'] = df['fecha'].apply(
@@ -167,6 +298,17 @@ def transform_date(df):
 
 
 def main():
+    """
+    Función principal para el script.
+
+    Parámetros
+    ----------
+    Ninguno
+
+    Retorno
+    -------
+    None
+    """
     arguments = docopt(__doc__)
     type_ = arguments['<type>']
     csv_path = arguments['<input_csv>']

@@ -15,8 +15,8 @@ from ortools.sat.python import cp_model
 
 
 def set_branch_contraints(model: cp_model.CpModel,
-                         demanda: dict,
-                         trabajadores: dict) -> dict:
+                          demanda: dict,
+                          trabajadores: dict) -> dict:
     """
     Define las restricciones de programación horaria para los trabajadores de una sucursal.
 
@@ -37,8 +37,7 @@ def set_branch_contraints(model: cp_model.CpModel,
     Retorno
     -------
     variables : dict
-        Un diccionario que contiene las variables de interés definidas como variables booleanas de la clase `model.NewBoolVar` 
-        con índices (trabajador, día, franja, estado).
+        Un diccionario que contiene las variables de interés definidas como variables booleanas de la clase `model.NewBoolVar` con índices (trabajador, día, franja, estado).
 
     Ejemplo de Uso
     -------------

@@ -8,7 +8,7 @@ Este módulo proporciona una función principal que genera la programación hora
 Función Principal
 -----------------
 """
-from .utils.load import load_demanda, load_workers
+from .utils.load import transform_demanda, transform_workers
 from ortools.sat.python import cp_model
 from .constraints.branch import set_branch_contraints
 from .optimization import set_optmization
@@ -88,8 +88,8 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
     >>> print(programacion)
 
     """
-    demanda, day2date = load_demanda(demanda, return_day2date=True)
-    trabajadores = load_workers(trabajadores)
+    demanda, day2date = transform_demanda(demanda, return_day2date=True)
+    trabajadores = transform_workers(trabajadores)
 
     model = cp_model.CpModel()
     variables = set_branch_contraints(model, demanda, trabajadores)
