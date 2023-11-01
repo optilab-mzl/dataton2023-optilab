@@ -36,7 +36,9 @@ def transform_demanda(demanda: list[dict],
     demanda_results = {}
     day2date = {}
     for record in demanda:
-        fecha = datetime.fromisoformat(record['fecha_hora'])
+        fecha = record['fecha_hora']
+        if type(fecha) is str:
+            fecha = datetime.fromisoformat(record['fecha_hora'])
         dia_semana = DAYS2DIAS[fecha.strftime("%A")]
         demanda_results.setdefault(dia_semana, {})
         franja =  f"{fecha.hour:02d}:{fecha.minute:02d}"

@@ -24,7 +24,9 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
                  linearization_level=1,
                  num_violation_ls=1,
                  initial_polarity=1,
-                 set_cp_model_presolve=True)-> list[dict]:
+                 set_cp_model_presolve=True,
+                 return_best_objective=False,
+                 solution_printer=None)-> list[dict]:
     """
     Genera una programación horaria para los trabajadores de una sucursal dada.
 
@@ -73,6 +75,12 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
 
     set_cp_model_presolve : bool, opcional
         Indica si se debe utilizar la optimización preprocesada del modelo (predeterminado: True).
+    
+    return_best_objective: bool, opcional
+        Indica se de debe retorna el mejor valor alcanzado en la optimización (predeterminado: False).
+    
+    solution_printer: function
+        Una función para mostrar los resultados de forma personalizada (predeterminado: None)
 
     Retorna
     -------
@@ -81,6 +89,9 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
         Cada diccionario incluye las claves 'hora_franja', 'estado', 'documento', 'fecha' y 'hora'.
         'hora_franja' es una franja horaria (valor entero), 'estado' es el estado del empleado en ese momento (Trabaja, Pausa Activa, Almuerza, Nada), 
         'documento' es el ID del empleado, 'fecha' es la fecha correspondiente a la programación y 'hora' es la hora correspondiente a la franja horaria.
+
+    best_objective: int 
+        Si return_best_objective es igual a True. Es el mejor valor alcanzado en la optimización 
 
     Ejemplo de Uso
     -------------
@@ -108,12 +119,15 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
     solver.parameters.initial_polarity = initial_polarity
     model.set_cp_model_presolve = set_cp_model_presolve
 
-    solver.Solve(model)
-    #print(solver.ObjectiveValue())
+    #solver.Solve(model)
+
+    status = solver.SolveWithSolutionCallback(model, solution_printer)
+    best_objective = solver.ObjectiveValue()
     results = results_to_dataframe(solver, variables, day2date)
     
-    results_dict = results.to_json(orient="records", 
-                                   date_format='iso', index=False)
+    results_dict = results.to_dict(orient="records")
 
+    if best_objective:
+        return results_dict, best_objective
     return results_dict
 

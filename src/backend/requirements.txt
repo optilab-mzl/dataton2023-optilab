@@ -3,3 +3,4 @@ ortools==9.7.2996
 pandas==2.1.2
 seaborn==0.13.0
 docopt==0.6.2
+tqdm
