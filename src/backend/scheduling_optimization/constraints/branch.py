@@ -58,7 +58,14 @@ def set_branch_contraints(model: cp_model.CpModel,
                     index = (trabajador, day, franja, estado)
                     name_var = f"{trabajador}-{day}-{franja}-{estado}"
                     variables[index] = model.NewBoolVar(name_var)
-    
+                    
+    # Debe haber al menos un trabajador en cada franja horaria que tenga una demanda mayor o igual a uno
+    for day in days:
+        for franja in franjas:
+            if demanda[day][franja] >= 1:
+                model.AddAtLeastOne(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
+
+
     # Agregar restricciones a nivel de trabajador
     for trabajador in trabajadores:
         variables_trabajador = {}
@@ -67,11 +74,5 @@ def set_branch_contraints(model: cp_model.CpModel,
                 for estado in posibles_estados:
                     variables_trabajador[(day, franja, estado)] = variables[(trabajador, day, franja, estado)]
         set_constraints_worker(model, variables_trabajador, contrato=trabajadores[trabajador])
-    
-    # Debe haber al menos un trabajador en cada franja horaria que tenga una demanda mayor o igual a uno
-    for day in days:
-        for franja in franjas:
-            if demanda[day][franja] >= 1:
-                model.AddAtLeastOne(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
 
     return variables

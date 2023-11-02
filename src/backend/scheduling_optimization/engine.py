@@ -13,20 +13,34 @@ from ortools.sat.python import cp_model
 from .constraints.branch import set_branch_contraints
 from .optimization import set_optmization
 from .utils.results_to_dataframe import results_to_dataframe
+import multiprocessing
 
 
 def get_schedule(demanda: list[dict], trabajadores: list[dict],
                  log_search_progress=True, log_callback=print,
-                 num_search_workers=0, random_seed=42,
-                 preferred_variable_order=0,
+                 num_search_workers=multiprocessing.cpu_count(),
+                 random_seed=42,
+                 preferred_variable_order=1,
                  max_time_in_seconds=360,
-                 detect_table_with_cost=True,
+                 detect_table_with_cost=False,
                  linearization_level=1,
                  num_violation_ls=1,
                  initial_polarity=1,
                  set_cp_model_presolve=True,
                  return_best_objective=False,
-                 solution_printer=None)-> list[dict]:
+                 solution_printer=None,
+                 variable_selection_strategy=2,
+                 domain_reduction_strategy=3,
+                 violation_ls_perturbation_period=100,
+                 shared_tree_num_workers=0,
+                 min_num_lns_workers=2,
+                 interleave_search=False,
+                 search_branching=0,
+                 exploit_best_solution=False,
+                 exploit_relaxation_solution=False,
+                 cp_model_probing_level=2,
+                 use_optional_variables=False,
+                 )-> list[dict]:
     """
     Genera una programación horaria para los trabajadores de una sucursal dada.
 
@@ -50,13 +64,13 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
         Una función de registro personalizada que se utiliza para registrar el progreso.
 
     num_search_workers : int, opcional
-        El número de trabajadores de búsqueda paralela (predeterminado: 0).
+        El número de trabajadores de búsqueda paralela (predeterminado: cpu_count).
 
     random_seed : int, opcional
         Una semilla para controlar la aleatoriedad en la búsqueda (predeterminado: 42).
 
     preferred_variable_order : int, opcional
-        El orden de variables preferido en la búsqueda (predeterminado: 0).
+        El orden de variables preferido en la búsqueda (predeterminado: 1).
 
     max_time_in_seconds : int, opcional
         El tiempo máximo en segundos para la búsqueda (predeterminado: 360).
@@ -98,6 +112,17 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
     >>> programacion = get_schedule(demanda_horaria, lista_trabajadores)
     >>> print(programacion)
 
+    Referencias
+    -----------
+
+    .. [1] `Parámetros de cp_model de ortools`_
+
+    .. [2] `Parámetros del solver de ortools`_
+
+    .. _`Parámetros de cp_model de ortools`: https://github.com/google/or-tools/blob/stable/ortools/sat/cp_model.proto
+
+    .. _`Parámetros del solver de ortools`: https://github.com/google/or-tools/blob/stable/ortools/sat/sat_parameters.proto
+
     """
     demanda, day2date = transform_demanda(demanda, return_day2date=True)
     trabajadores = transform_workers(trabajadores)
@@ -117,7 +142,19 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
     solver.parameters.linearization_level = linearization_level
     solver.parameters.num_violation_ls = num_violation_ls
     solver.parameters.initial_polarity = initial_polarity
+    solver.parameters.violation_ls_perturbation_period = violation_ls_perturbation_period
+    solver.parameters.shared_tree_num_workers = shared_tree_num_workers
+    solver.parameters.min_num_lns_workers = min_num_lns_workers
+    solver.parameters.interleave_search = interleave_search
+    solver.parameters.search_branching = search_branching
+    solver.parameters.exploit_best_solution = exploit_best_solution
+    solver.parameters.exploit_relaxation_solution = exploit_relaxation_solution
+    solver.parameters.cp_model_probing_level = cp_model_probing_level
+    solver.parameters.use_optional_variables = use_optional_variables
+
+    model.variable_selection_strategy = variable_selection_strategy
     model.set_cp_model_presolve = set_cp_model_presolve
+    model.domain_reduction_strategy = domain_reduction_strategy
 
     #solver.Solve(model)
 
@@ -130,4 +167,3 @@ def get_schedule(demanda: list[dict], trabajadores: list[dict],
     if best_objective:
         return results_dict, best_objective
     return results_dict
-

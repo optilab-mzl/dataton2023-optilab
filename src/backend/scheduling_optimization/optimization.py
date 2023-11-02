@@ -41,21 +41,23 @@ def set_optmization(model: cp_model.CpModel,
     trabajadores = np.unique(trabajadores)
     days = np.unique(days)
     franjas = np.unique(franjas)
-    
     restas = []
+
     for day in days: 
         for franja in franjas:
 
             demanda_day_franja = demanda[day][franja]
 
-            trabjadores_en_franja = sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
+            if demanda_day_franja > 0:
+
+                trabjadores_en_franja = sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
             
-            resta = model.NewIntVar(0, demanda_day_franja, '')
-            damanda_menos_resta = demanda_day_franja - trabjadores_en_franja
+                resta = model.NewIntVar(0, demanda_day_franja, '')
+                damanda_menos_resta = demanda_day_franja - trabjadores_en_franja
             
-            # Solo interesa cuando es positivo (Demanda màs alta que capacidad)
-            model.AddMaxEquality(resta, [0, damanda_menos_resta])
-            restas.append(resta)
-     
+                # Solo interesa cuando es positivo (Demanda màs alta que capacidad)
+                model.AddMaxEquality(resta, [0, damanda_menos_resta])
+                restas.append(resta)
+
     objetivo = sum(restas)
     model.Minimize(objetivo)

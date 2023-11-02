@@ -194,18 +194,18 @@ def almuerzo(model: cp_model.CpModel, variables: dict) -> None:
         model.Add(patron_iniciando_almuerzo != 3).OnlyEnforceIf(inicio_almuerzo.Not())
 
         sub_franjas = franjas[max(idx-4, 0): idx]
-        model.Add(sum(variables[(f, "Trabaja")]  for f in sub_franjas)==4).OnlyEnforceIf(inicio_almuerzo)
+        model.Add(sum(variables[(f, "Trabaja")] for f in sub_franjas) == 4).OnlyEnforceIf(inicio_almuerzo)
 
-    for f in  [*franjas[:16],*franjas[30:]]:
-        model.Add(variables[(f, "Almuerza")]==0)
+    for f in [*franjas[:16], *franjas[30:]]:
+        model.Add(variables[(f, "Almuerza")] == 0)
 
     _franjas = franjas[16:30]
     almorzando = {}
     for i, idx in enumerate(_franjas):
         sub_franjas = _franjas[i:i+6]
         almorzando[i] = model.NewBoolVar("")
-        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)==6).OnlyEnforceIf(almorzando[i])
-        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas)!=6).OnlyEnforceIf(almorzando[i].Not())
+        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas) == 6).OnlyEnforceIf(almorzando[i])
+        model.Add(sum(variables[(f, "Almuerza")] for f in sub_franjas) != 6).OnlyEnforceIf(almorzando[i].Not())
     model.AddExactlyOne(almorzando.values())
 
 
@@ -263,6 +263,6 @@ def set_constraints_day(model: cp_model.CpModel, variables: dict, day: str,
     # El Sábado no se trabaja todo el día
     if day == "Sábado":
         for f in franjas[29:]:
-            model.Add(variables[(f, "Trabaja")]==0)
+            model.Add(variables[(f, "Nada")]==1)
 
 
