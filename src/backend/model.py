@@ -8,13 +8,18 @@ Este módulo permite generar la programación horaria de los trabajadores de una
 Función principal
 -----------------
 """
-from scheduling_optimization import get_schedule
+from scheduling_optimization import get_schedule as gs
+from pydantic_models import Demand, Workers, Scheduling, RowScheduling
 
 
-def generar_programacion_horaria(sucursal_codigo: int,
-                                 demanda: list[dict],
-                                 trabajadores: list[dict]
-                                 ) -> list[dict]:
+def cambiar_nombres_claves(diccionario, mapeo):
+    return {mapeo.get(clave, clave): valor for clave, valor in diccionario.items()}
+
+
+def get_schedule(
+                 demanda: Demand,
+                 trabajadores: Workers,
+                 ) -> Scheduling:
     """
     Genera una programación horaria para los trabajadores de una sucursal.
 
@@ -51,8 +56,21 @@ def generar_programacion_horaria(sucursal_codigo: int,
     >>> print(programacion)
 
     """
-    programacion = get_schedule(demanda, trabajadores)
-    return programacion
+    
+    demanda = [dict(i) for i in demanda]
+    #mapeo_claves = {'date': 'fecha_hora', 'demand': 'demanda'}
+    #demanda = [cambiar_nombres_claves(d, mapeo_claves) for d in demanda]
+
+    trabajadores =  [dict(i) for i in trabajadores]
+    #mapeo_claves = {'id': 'documento', 'type_of_contract': 'contrato'}
+    #trabajadores = [cambiar_nombres_claves(t, mapeo_claves) for t in trabajadores]
+
+    programacion = gs(demanda, trabajadores)
+
+    #mapeo_claves = {'hora_franja':'time_slot_id', 'estado':'status', 'documento':'worker_id', 'fecha':'date', 'hora':'hour'}
+    #programacion = [cambiar_nombres_claves(t, mapeo_claves) for p in programacion]
+    rows = [RowScheduling(**p) for p in programacion]
+    return Scheduling(rows)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,20 @@
-<figure  align="center">
-<img src='./assets/logo.png' width="200"> 
-</figure>
+<p align="center">
+  <img src='./assets/logo.png' width="200"> 
+</p>
 
-# <center> Optimal Scheduling Program  </center>
+
+<h1 align="center"> Optimal Scheduling Program</h1>
+
 
 ![Python version](https://img.shields.io/badge/Python-3.10-blue)
 
+
+<!-- # Ideas para vender el proyecto 
+
+- OpenSource 
+- buenas prácticas de código 
+- intereface amigable
+- Escalamiento horizontal y vertical -->
 
 
 ## Motivación 
@@ -66,7 +75,7 @@ Options:
   -h, --ayuda                      Muestra este mensaje de ayuda y sale.
 
 ```
-<!-- 
+
 ### Instalación con Docker
 
 ```
@@ -83,8 +92,9 @@ Escalamiento horizontal y vertical.
 
 ## Estructura del repositorio 
 
-## Arquitectura del sistema -->
+## Arquitectura del sistema
 
+Posibilidad de escalamiento vertical y horizontal. 
 
 # Solución detallada del problema
 
@@ -193,7 +203,7 @@ La formulación matemática del problema es la siguiente:
 
 $$
 \begin{align*}
-\mathbf{P}^* = \arg \max_{\mathbf{P}} \sum_d \sum_f \max(0, \mathbf{D}_{d,f}- \sum_t \mathbf{P} ^{+} _{t,d,f})
+\mathbf{P}^* = \arg \min_{\mathbf{P}} \sum_d \sum_f \max(0, \mathbf{D}_{d,f}- \sum_t \mathbf{P} ^{+} _{t,d,f})
 \\
 \text{Sujeto a } C_1(\mathbf{P}) \land C_2(\mathbf{P}) \land \dots \land  C_n(\mathbf{P})
 \end{align*}
