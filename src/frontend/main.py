@@ -7,6 +7,84 @@ import seaborn as sns
 import matplotlib.dates as mdates
 
 
+
+# def generar_franjas(inicio, final):
+#     horas = []
+#     hora, minuto = inicio
+#     while (hora, minuto) <= final:
+#         horas.append(f"{hora:02d}:{minuto:02d}")
+#         if minuto + 15 >= 60:
+#             hora += 1
+#             minuto = 0
+#         else:
+#             minuto += 15
+#     return horas
+
+
+# FRANJAS = list(range(30,76))
+# H2F = {h:f for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
+# F2H = {f:h for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
+
+
+
+def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None, title: str = None):
+    """
+    Genera un gráfico de programación para un día específico.
+
+    Parámetros
+    ----------
+    df_schedule : pd.DataFrame
+        El DataFrame que contiene los datos de programación.
+    day : str, opcional
+        El día para el cual se generará el gráfico de programación.
+    ax : plt.Axes, opcional
+        El eje en el que se dibujará el gráfico.
+    title : str, opcional
+        El título del gráfico.
+
+    Retorno
+    -------
+    None
+    """
+    df = df_schedule.copy()
+    if day:
+        df = df[df['dia']==day]
+    
+    #df['hora_franja'] = df['hora_franja'].apply(lambda x: f"{x}-{F2H[x]}")
+
+    pivot_df = df.pivot_table(index='hora_franja', 
+                            columns='documento',
+                            values='estado', aggfunc='first')
+
+    # Map categorical values to integers
+    cmap = sns.color_palette(['green', 'blue', 'red', 'gray'])
+    state_mapping = {'Trabaja': 0, 'Almuerza': 1, 'Pausa Activa': 2, 'Nada':3}
+    mapped_data = pivot_df.replace(state_mapping)
+
+    show = False
+    if not ax:
+        fig, ax = plt.subplots(figsize=(8, 9))
+        show = True
+    
+    print(mapped_data)
+    sns.heatmap(mapped_data, cmap=cmap, annot=False, fmt='',
+                cbar=False, linewidths=0.5, ax=ax)
+
+    ax.set_title(f'Cronograma {day}')
+    ax.set_xlabel('Empleado')
+    ax.set_ylabel('Franja')
+    plt.suptitle(title)
+    if show:
+        plt.tight_layout()
+        plt.show()
+
+    st.pyplot(fig)
+
+    
+    
+
+
+
 # Load Bancolombia Logotipo
 st.image("Bancolombia_S.A._logo.svg.png", use_column_width=True)
 
@@ -180,11 +258,29 @@ if uploaded_file is not None:
     st.pyplot(fig)
     
     if st.button("Programar el horario de los empleados para la sucursal seleccionada"):
+
+        schedule_select_suc=pd.read_json(f"/home/juan/dev/dataton2023-optilab/test/data/output/{selected_sucursal}.json")
+        #Show the schedule
+        st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Horario de los Empleados para la Sucursal Seleccionda:</p>", unsafe_allow_html=True)
+        st.dataframe(schedule_select_suc, width=800, height=300)
+
+
+        
+        st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la programación de la sucursal seleccionada:</p>", unsafe_allow_html=True)
+        selected_fecha_sche = st.selectbox(" ", unique_dates)
+        schedule_select_suc_day=schedule_select_suc[schedule_select_suc["fecha"]==str(selected_fecha_sche)]
+        schedule_day(schedule_select_suc_day)
+
+        
+        #Show the plot
+        #st.pyplot(fig)
+
+    """if st.button("Programar el horario de los empleados para todas las sucursales"):
         #Show the schedule
         st.dataframe(info_workers_suc, width=800, height=300)
         
         #Show the plot
-        st.pyplot(fig)
+        st.pyplot(fig)"""
         
 
 
