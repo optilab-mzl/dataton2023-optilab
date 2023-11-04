@@ -9,13 +9,6 @@
 ![Python version](https://img.shields.io/badge/Python-3.10-blue)
 
 
-<!-- # Ideas para vender el proyecto 
-
-- OpenSource 
-- buenas prácticas de código 
-- intereface amigable
-- Escalamiento horizontal y vertical -->
-
 
 ## Motivación 
 
@@ -38,11 +31,13 @@ $ git clone https://github.com/optilab-mzl/dataton2023-optilab.git
 $ cd dataton2023-optilab
 ```
 
+Es posible interactuar con la solución desarrollada de dos maneras: vía linea de comandos (CLI) o mediante interface web. Teniendo en cuenta la forma de evaluación en el criterio de eficiencia, se pide que se use la línea de comandos o CLI. A continuación se explica cada uno de ellos. 
 
-### Instalación como Paquete de Python
+
+### Instalación como Paquete de Python (Interface CLI)
+
 
 Puedes instalar la herramienta como un paquete de Python utilizando pip:
-
 
 ```
 $ pip install src/backend
@@ -76,7 +71,7 @@ Options:
 
 ```
 
-### Instalación con Docker
+### Instalación con Docker (Interface GUI)
 
 ```
 
@@ -84,26 +79,84 @@ Options:
 
 ## Características 
 
-Escalamiento horizontal y vertical. 
+- Capacidad de escalamiento horizontal y vertical.
+- Código abierto.
+- Aprovechamiento total de los recursos de procesamiento disponibles.
 
 ## Workflow
 
 ## Recomendaciones 
 
+### Definición de las entradas
+
+El archivo de entrada debe ser excel que tenga dos hojas demand y workers descritas a continuación:
+
+demand
+
+<center>
+
+| Columna    | Descripción             |
+|------------|-------------------------|
+| suc_cod    | Código de la sucursal   |
+| fecha_hora | Franja horaria          |
+| demanda    | Demanda estimada        |
+
+</center>
+
+workers
+
+<center>
+
+|   Columna   |         Descripción         |
+| ----------- | --------------------------- |
+|   suc_cod   | Código de la sucursal       |
+|  documento  | Código de identificación    |
+|  contrato   | Tipo de contrato            |
+
+</center>
+
+### Definición de las salidas
+
+La salida es un archivo csv con los siguientes campos 
+
+<center>
+
+|   Columna   |         Descripción         |
+| ----------- | --------------------------- |
+|  hora_franja   | Número de franja       |
+|  estado  | Estado del empleado    |
+|  documento   | Documento del empleado            |
+|  fecha   | Fecha           |
+|  hora   | Hora            |
+|   suc_cod   | Código de la sucursal       |
+
+</center>
+
+
 ## Estructura del repositorio 
 
 ## Arquitectura del sistema
 
-Posibilidad de escalamiento vertical y horizontal. 
+El sistema está compuesto por dos componentes principales: el frontend desarrollado usando Streamlit y el backend de optimización desarrollado usando cp-sat como librería de optimización. 
 
-# Solución detallada del problema
+<p align="center">
+  <figure align="center">
+  <img src='./assets/architecture.png' width="600"> 
+  <figcaption>Arquitectura del sistema</figcaption>
+  </figure>
+</p>
+
+Cada uno de estos componentes esta doquerizado, lo que facilita, principalmente al modulo de optimización, tener un escalamiento tanto vertical como horizontal. 
+
+
+# Solución del problema de optimización
 
 ### Definición del problema
 
 Bancolombia está interesado en mejorar la programación horaria SEMANAL de los empleados de caja de 5 sucursales. Los empleados pueden estar en 4 estados:
 
-1.  **Trabaja**: El empleado esta disponible para atender clientes.
-2.  **Pausa Activa**: El empleado no esta disponible para atender clientes.
+1. **Trabaja**: El empleado esta disponible para atender clientes.
+2. **Pausa Activa**: El empleado no esta disponible para atender clientes.
 3. **Almuerza**: El empleado esta tomando su tiempo de almuerzo (no disponible para atender clientes)
 4. **Nada**: El empleado no ha comenzado su jornada laboral o ya la termino.
 
@@ -156,7 +209,7 @@ El último estado todos los días de la jornada laboral de los empleados debe se
 
 Debe haber por lo menos 1 empleado en el estado Trabaja en cada franja horaria que tenga una demanda mayor o igual a 1.
 
-Datos 
+### Datos 
 El archivo `Dataton 2023 Etapa 2.xlsx` tiene dos hojas demand y workers descritas a continuación:
 
 demand
