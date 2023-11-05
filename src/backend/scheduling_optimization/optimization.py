@@ -53,10 +53,11 @@ def set_optmization(model: cp_model.CpModel,
                 trabjadores_en_franja = sum(variables[(t, day, franja, 'Trabaja')] for t in trabajadores)
             
                 resta = model.NewIntVar(0, demanda_day_franja, '')
-                damanda_menos_resta = demanda_day_franja - trabjadores_en_franja
-            
+                damanda_menos_capacidad = demanda_day_franja - trabjadores_en_franja
+                capacidad_menos_demanda = trabjadores_en_franja - demanda_day_franja
                 # Solo interesa cuando es positivo (Demanda màs alta que capacidad)
-                model.AddMaxEquality(resta, [0, damanda_menos_resta])
+                model.AddMaxEquality(resta, [0, damanda_menos_capacidad])
+
                 restas.append(resta)
 
     objetivo = sum(restas)
