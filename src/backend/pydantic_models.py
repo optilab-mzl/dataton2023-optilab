@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import List, Literal
+
+from pydantic import BaseModel
 
 
 class DemandTimePoint(BaseModel):
@@ -13,7 +14,7 @@ class Demand(BaseModel):
 
 class Worker(BaseModel):
     documento: int
-    contrato: Literal["TP", "MT"]
+    contrato: Literal["TC", "MT"]
 
 
 class Workers(BaseModel):
@@ -22,7 +23,7 @@ class Workers(BaseModel):
 
 class RowScheduling(BaseModel):
     hora_franja: int
-    estado: Literal["Trabaja", "Pausa Activa", "Almuerza", "Nada"]  #  lowecase
+    estado: str
     documento: int
     fecha: str
     hora: str
