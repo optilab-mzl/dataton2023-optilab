@@ -104,13 +104,13 @@ Con el archivo de entrada `Dataton 2023 Etapa 2.xlsx` se obtuvo un score (demand
 
 A continuación se muestran las programaciones obtenidas:
 
-|Programación | Demanda menos capacidad |
-|:-------------------------:|:-------------------------:|
-|<img width="600" src="./assets/outputs/suc_311.png">|  <img width="600" src="./assets/outputs/DC_311.png">|
-|<img width="600" src="./assets/outputs/suc_60.png">|  <img width="600" src="./assets/outputs/DC_60.png">|
-|<img width="600" src="./assets/outputs/suc_834.png">|  <img width="600" src="./assets/outputs/DC_834.png">|
-|<img width="600" src="./assets/outputs/suc_487.png">|  <img width="600" src="./assets/outputs/DC_487.png">|
-|<img width="600" src="./assets/outputs/suc_569.png">|  <img width="600" src="./assets/outputs/DC_569.png">|
+| Sucursal |Programación | Demanda menos capacidad |
+|:----------------------:|:-------------------------:|:-------------------------:|
+| 311|<img width="600" src="./assets/outputs/suc_311.png">|  <img width="600" src="./assets/outputs/DC_311.png">|
+| 60|<img width="600" src="./assets/outputs/suc_60.png">|  <img width="600" src="./assets/outputs/DC_60.png">|
+| 834|<img width="600" src="./assets/outputs/suc_834.png">|  <img width="600" src="./assets/outputs/DC_834.png">|
+| 487|<img width="600" src="./assets/outputs/suc_487.png">|  <img width="600" src="./assets/outputs/DC_487.png">|
+| 569|<img width="600" src="./assets/outputs/suc_569.png">|  <img width="600" src="./assets/outputs/DC_569.png">|
 
 
 
