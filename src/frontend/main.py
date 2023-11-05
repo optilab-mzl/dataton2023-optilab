@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import matplotlib.dates as mdates
+from matplotlib.dates import DateFormatter
+import requests
+import os 
+import json
 
 
 
@@ -25,7 +29,22 @@ import matplotlib.dates as mdates
 # H2F = {h:f for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
 # F2H = {f:h for f,h in zip(FRANJAS, generar_franjas((7,30), (18,45)))}
 
+def demand_jobs_to_json(df_d, df_w):
+    output_dict = {}
+    output_dict['demand'] = {}
+    output_dict['workers'] = {}
 
+    df_d['fecha_hora'] = df_d['fecha_hora'].apply(lambda x: str(x))
+
+    output_dict['demand']['demand_time_points'] = df_d[['fecha_hora','demanda']].to_dic(orient="records")
+    
+    output_dict['workers']['list_of_workers'] = df_w[['documento','contrato']].to_dic(orient="records")
+
+    return output_dict
+
+# Función para contar el número de veces que "Trabaja" aparece en una fila
+def contar_trabaja(row):
+    return row.str.count('Trabaja').sum()
 
 def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None, title: str = None):
     """
@@ -55,7 +74,7 @@ def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None
     pivot_df = df.pivot_table(index='hora_franja', 
                             columns='documento',
                             values='estado', aggfunc='first')
-
+    print("PIVOT_DF",type(pivot_df),pivot_df)
     # Map categorical values to integers
     cmap = sns.color_palette(['green', 'blue', 'red', 'gray'])
     state_mapping = {'Trabaja': 0, 'Almuerza': 1, 'Pausa Activa': 2, 'Nada':3}
@@ -66,7 +85,7 @@ def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None
         fig, ax = plt.subplots(figsize=(8, 9))
         show = True
     
-    print(mapped_data)
+    print("MAPPED_DATA",type(mapped_data),mapped_data)
     sns.heatmap(mapped_data, cmap=cmap, annot=False, fmt='',
                 cbar=False, linewidths=0.5, ax=ax)
 
@@ -77,14 +96,18 @@ def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None
     if show:
         plt.tight_layout()
         plt.show()
+        
+    
 
-    st.pyplot(fig)
+    #st.pyplot(fig)
+    pivot_df["capacidad"]=pivot_df.apply(contar_trabaja, axis=1)
+    st.dataframe(pivot_df, width=800, height=300)
+    
+    
+    return pivot_df
 
     
     
-
-
-
 # Load Bancolombia Logotipo
 st.image("Bancolombia_S.A._logo.svg.png", use_column_width=True)
 
@@ -213,7 +236,7 @@ if uploaded_file is not None:
     st.dataframe(info_workers_suc, width=800, height=300)
         
     # Select to choose a fecha
-    st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la curva de demanda en la sucursal seleccionada:</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la información de la sucursal seleccionada:</p>", unsafe_allow_html=True)
     selected_fecha = st.selectbox("", unique_dates)
     #st.write("Has seleccionado la fecha:", selected_fecha)
         
@@ -224,7 +247,11 @@ if uploaded_file is not None:
     info_demand=info_demand.drop("fecha_sin_hora",axis=1)
     
     info_demand_copy=info_demand_copy[info_demand_copy["suc_cod"]==selected_sucursal]
+    info_demand_copy_input=info_demand_copy.copy()
     info_demand_copy=info_demand_copy[info_demand_copy["fecha_sin_hora"]==selected_fecha]
+    
+    st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Información de la demanda en la sucursal seleccionada en el día seleccionado:</p>", unsafe_allow_html=True)
+    st.dataframe(info_demand_copy.drop("fecha_sin_hora"), width=800, height=300)
    
     # Time line Demand
     #st.write("Demanda Horaria:")
@@ -232,7 +259,7 @@ if uploaded_file is not None:
     # Configurar el estilo Seaborn
     #sns.set(style="whitegrid")
     
-
+    
     # Configuration plot
     fig, ax = plt.subplots(figsize=(10, 5))
     ax = sns.lineplot(x=info_demand_copy["fecha_hora"], y=info_demand_copy["demanda"], ci=None, color="black")
@@ -256,31 +283,73 @@ if uploaded_file is not None:
     
     #Show the plot
     st.pyplot(fig)
+    #schedule_select_suc=pd.read_json(f"{selected_sucursal}.json")
     
-    if st.button("Programar el horario de los empleados para la sucursal seleccionada"):
 
-        schedule_select_suc=pd.read_json(f"/home/juan/dev/dataton2023-optilab/test/data/output/{selected_sucursal}.json")
-        #Show the schedule
-        st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Horario de los Empleados para la Sucursal Seleccionda:</p>", unsafe_allow_html=True)
-        st.dataframe(schedule_select_suc, width=800, height=300)
+    
+    input_data=demand_jobs_to_json(info_demand_copy_input,info_workers_suc)
+    backend_api_url="http://localhost:5000/"
+    response = requests.post(url=backend_api_url + "/get_schedule",json=input_data)
+    whats_list = response.json()["get_schedule"]
+    
+    
+    #Show the schedule
+    st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Horario de los empleados para la sucursal seleccionda en el día seleccionado:</p>", unsafe_allow_html=True)
+    #st.dataframe(schedule_select_suc, width=800, height=300)
+
+
+    
+    #st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la programación de la sucursal seleccionada:</p>", unsafe_allow_html=True)
+    #selected_fecha_sche = st.selectbox(" ", unique_dates)
+    schedule_select_suc_day=schedule_select_suc[schedule_select_suc["fecha"]==str(selected_fecha)]
+    schedule_select_suc_day_trans=schedule_day(schedule_select_suc_day)
+    
+    #schedule_select_suc_day_trans.reset_index(inplace=True)
+    #schedule_select_suc_day_trans.set_index("")
+    print(schedule_select_suc_day_trans.columns)
+    info_demand_copy.index=schedule_select_suc_day_trans.index
+    info_demand_work=pd.concat([info_demand_copy[["fecha_hora","demanda"]],schedule_select_suc_day_trans[["capacidad"]]],axis=1)
+    #st.dataframe(info_demand_work, width=800, height=300)
+    
+    
+
+    # Convierte la columna 'fecha_hora' en tipo datetime
+    info_demand_work['fecha_hora'] = pd.to_datetime(info_demand_work['fecha_hora'])
+
+    # Crea un objeto fig, ax y un gráfico de líneas de tiempo
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.plot(info_demand_work['fecha_hora'], info_demand_work['demanda'], label='Demanda',color="black")
+    ax.plot(info_demand_work['fecha_hora'], info_demand_work['capacidad'], label='Capacidad',color="gray")
+
+    # Colorear el área entre las curvas de demanda y capacidad
+    ax.fill_between(info_demand_work['fecha_hora'], info_demand_work['demanda'], info_demand_work['capacidad'], where=(info_demand_work['demanda'] > info_demand_work['capacidad']),
+                    interpolate=True, color='red', alpha=0.3, label='Demanda > Capacidad')
+    ax.fill_between(info_demand_work['fecha_hora'], info_demand_work['demanda'], info_demand_work['capacidad'], where=(info_demand_work['demanda'] <= info_demand_work['capacidad']),
+                    interpolate=True, color='green', alpha=0.3, label='Demanda <= Capacidad')
+
+    ax.set_xlabel('Hora del día')
+    ax.set_ylabel('Valores')
+    ax.set_title('Evolución de Demanda y Capacidad a lo largo del tiempo')
+    ax.legend()
+
+    # Formatear el eje x para mostrar solo la hora
+    date_format = DateFormatter("%H:%M")
+    ax.xaxis.set_major_formatter(date_format)
+
+    plt.xticks(rotation=45)
+
+    plt.tight_layout()
+    #plt.show()
+
+    
+    #Show the plot
+    st.pyplot(fig)
+    
+    
 
 
         
-        st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la programación de la sucursal seleccionada:</p>", unsafe_allow_html=True)
-        selected_fecha_sche = st.selectbox(" ", unique_dates)
-        schedule_select_suc_day=schedule_select_suc[schedule_select_suc["fecha"]==str(selected_fecha_sche)]
-        schedule_day(schedule_select_suc_day)
-
-        
-        #Show the plot
-        #st.pyplot(fig)
-
-    """if st.button("Programar el horario de los empleados para todas las sucursales"):
-        #Show the schedule
-        st.dataframe(info_workers_suc, width=800, height=300)
-        
-        #Show the plot
-        st.pyplot(fig)"""
         
 
 
