@@ -10,8 +10,8 @@ Función principal
 """
 from time import time
 
-from pydantic_models import Demand, RowScheduling, Scheduling, Workers
-from scheduling_optimization import get_schedule as gs
+from backend.pydantic_models import Demand, RowScheduling, Scheduling, Workers
+from backend.scheduling_optimization import get_schedule as gs
 
 
 def cambiar_nombres_claves(diccionario, mapeo):

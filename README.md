@@ -48,7 +48,12 @@ Una vez instalado, puedes generar horarios ejecutando el siguiente comando:
 ```
 $ get_schedule <ruta_excel> <ruta_salida>
 ```
-Asegúrate de reemplazar <ruta_excel> con la ubicación de tu archivo Excel y <ruta_salida> con la ruta de salida deseada.
+Asegúrate de reemplazar <ruta_excel> con la ubicación de tu archivo Excel y <ruta_salida> con la ruta de salida deseada. Por ejemplo: 
+
+```
+$ get_schedule /home/Downloads/demanda.xlsx /home/output.csv
+```
+
 
 Si requiere ayuda puede usar la opción de ayuda
 
@@ -157,7 +162,7 @@ Bancolombia está interesado en mejorar la programación horaria SEMANAL de los 
 
 1. **Trabaja**: El empleado esta disponible para atender clientes.
 2. **Pausa Activa**: El empleado no esta disponible para atender clientes.
-3. **Almuerza**: El empleado esta tomando su tiempo de almuerzo (no disponible para atender clientes)
+3. **Almuerza**: El empleado esta tomando su tiempo de almuerzo (no disponible para atender <ruta_salida>clientes)
 4. **Nada**: El empleado no ha comenzado su jornada laboral o ya la termino.
 
 **El objetivo del ejercicio es definir en qué estado se encuentra cada uno de los empleados en franjas horarias de 15 minutos con el fin de minimizar la diferencia existente entre la cantidad de empleados trabajando y la demanda de empleados requerida para cada franja horaria cuando la demanda es mayor a la capacidad**. Estas demandas se tienen para cada una de las franjas para todos los días de una semana de lunes a sábado.

@@ -47,6 +47,6 @@ for branch in branches:
 
     df_r['fecha'] = df_r['fecha'].apply(lambda x: str(x))
     output_dict['rows'] =  df_r[['hora_franja', 'estado', 'documento', 'fecha', 'hora']].to_dict(orient="records")
-
+    print(type(output_dict['rows']))
     with open(output_path_d, 'w') as archivo:
         json.dump(output_dict, archivo, indent=4)
