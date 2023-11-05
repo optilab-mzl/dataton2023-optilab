@@ -78,9 +78,41 @@ Options:
 
 ### Instalación con Docker (Interface GUI)
 
-```
+
+Crear imagen del docker 
 
 ```
+$ docker build -t scheduling:1.0  src/backend 
+```
+
+Verificar que se creó la imagen
+```
+$ docker images
+```
+
+Correr docker 
+
+```
+$ docker run --name scheduling  -p 8000:8000 scheduling:1.0
+```
+
+## Resultados 
+
+Las especificaciones del hardware con las que se obtuvieron los siguientes resultados son: Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 4 procesadores físicos y 8 procesadores lógicos, con 12GB de RAM.
+
+Con el archivo de entrada `Dataton 2023 Etapa 2.xlsx` se obtuvo un score (demanda menos capacidad cuando la demanda es más alta que la capacidad) de **2624**.
+
+A continuación se muestran las programaciones obtenidas:
+
+|Programación | Demanda menos capacidad |
+|:-------------------------:|:-------------------------:|
+|<img width="600" src="./assets/outputs/suc_311.png">|  <img width="600" src="./assets/outputs/DC_311.png">|
+|<img width="600" src="./assets/outputs/suc_60.png">|  <img width="600" src="./assets/outputs/DC_60.png">|
+|<img width="600" src="./assets/outputs/suc_834.png">|  <img width="600" src="./assets/outputs/DC_834.png">|
+|<img width="600" src="./assets/outputs/suc_487.png">|  <img width="600" src="./assets/outputs/DC_487.png">|
+|<img width="600" src="./assets/outputs/suc_569.png">|  <img width="600" src="./assets/outputs/DC_569.png">|
+
+
 
 ## Características 
 
@@ -305,3 +337,13 @@ assignment that satisfies a given propositional formula.
 - SAT solvers are extremely efficient
 - integer programming problems
 - CP-SAT solver: A constraint programming solver that uses SAT (satisfiability) method -->
+
+
+<!-- 
+
+Todo:
+
+Usar pydantic
+
+ -->
+

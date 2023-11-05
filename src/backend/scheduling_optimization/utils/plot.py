@@ -2,7 +2,7 @@
 Genera gráficos de programación y capacidad vs. demanda.
 
 Usage:
-  get_plot <tipo> <archivo_csv> <código_sucursal> [--dia=<día>] [--demand_csv=archivo_demanda]
+  get_plot <tipo> <archivo_csv> <código_sucursal> [--dia=<día>] [--demand_excel=archivo_demanda]
 
 Arguments:
   <tipo>              Tipo de gráfico que se generará. Puede ser "schedule" para gráficos de programación o "capacity_vs_demand" para gráficos de capacidad vs. demanda.
@@ -11,7 +11,7 @@ Arguments:
   
 Options:
   --dia=<día>                     (Opcional) Día específico para el que se generará un gráfico de programación.
-  --demand_csv=archivo_demanda    (Opcional) Ruta al archivo de demanda (en formato Excel) que se utilizará para gráficos de capacidad vs. demanda.
+  --demand_excel=archivo_demanda    (Opcional) Ruta al archivo de demanda (en formato Excel) que se utilizará para gráficos de capacidad vs. demanda.
 """
 from docopt import docopt
 import matplotlib.pyplot as plt
@@ -37,7 +37,7 @@ VALORES_DIAS = {
 
 def schedule_day(df_schedule: pd.DataFrame, day: str = None, 
                  ax: plt.Axes = None, title: str = None) -> None:
-     """
+    """
     Genera un gráfico de programación para un día específico.
 
     Parámetros
@@ -276,7 +276,7 @@ def plot_diff_capacidad_vs_demanda(capacidad: pd.Series, demanda:dict,
     
 
 def transform_date(df: pd.DataFrame) -> pd.DataFrame:
-     """
+    """
     Transforma la fecha en el DataFrame para su posterior uso en los gráficos.
 
     Parámetros
@@ -310,16 +310,16 @@ def main():
     None
     """
     arguments = docopt(__doc__)
-    type_ = arguments['<type>']
-    csv_path = arguments['<input_csv>']
-    demand_csv = arguments['--demand_csv']
-    day = arguments['--day']
-    branch = arguments['<suc_cod>']
+    type_ = arguments['<tipo>']
+    csv_path = arguments['<archivo_csv>']
+    demand_excel = arguments['--demand_excel']
+    day = arguments['--dia']
+    branch = arguments['<código_sucursal>']
 
     df_schedule = pd.read_csv(csv_path)
     df_schedule = transform_date(df_schedule)
     df_schedule = df_schedule[df_schedule['suc_cod']==int(branch)]
-    title = f"Còdigo Sucursal {branch}"
+    title = f"Código Sucursal {branch}"
 
     if type_ == "schedule":
         if not day:
@@ -328,9 +328,10 @@ def main():
         elif day:
             schedule_day(df_schedule, day, title=title)
     elif type_ == "capacity_vs_demand":
-        df_demand = pd.read_excel(demand_csv, sheet_name="demand")
+        df_demand = pd.read_excel(demand_excel, sheet_name="demand")
         df_demand = df_demand[df_demand['suc_cod']==int(branch)]
-        capacidad_vs_demanda(df_schedule, df_demand, title)
+        demanda = df_demand[['fecha_hora', 'demanda']].to_dict(orient="records")
+        capacidad_vs_demanda(df_schedule, demanda, title)
 
 
 if __name__ == "__main__":
