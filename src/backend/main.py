@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from model import get_schedule as gs
+
+from backend.model import get_schedule as gs
 from backend.pydantic_models import Demand, Scheduling, Workers
 
 app = FastAPI()
