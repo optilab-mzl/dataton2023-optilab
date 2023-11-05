@@ -1,0 +1,8 @@
+Dockerfile
+.dockerignore
+__pycache__
+.pytest_cache
+data/
+README.md
+setup.py
+test_main.py
