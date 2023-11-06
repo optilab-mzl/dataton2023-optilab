@@ -281,9 +281,104 @@ La arquitectura propuesta ofrece las siguientes características clave:
 
 
 
-## Interface web detallado
+## Interfaz web detallado
 
 ### Workflow
+
+Se ha desarrollado una interfaz web utilizando el paquete de python **streamlit**; con el proposito de ofrecer una experiencia de usuario más atractiva y eficiente al **Centro de Excelencia Analítica -IA- GI de Bancolombia** a la hora de evaluar la solución propuesta por el equipo **OptiLab**. 
+
+A continuación se enumera una serie de pasos que se deben seguir a la hora de evaluar la solución desde la interfaz gráfica desarrollada:
+
+1. En la pestaña **información general**, subir el libro de excel con la estructura específicada en la sección [Definición de las entradas](#definici%C3%B3n-de-las-entradas).
+<p align="center">
+      <figure align="center">
+      <img src='./assets/upload_excel.png' width="800"> 
+      <figcaption>Subir Archivo Excel de Entrada</figcaption>
+      </figure>
+</p>
+
+2. Seleccionar la sucursal para la cual se desea programar el horario semanal de los empleados de caja.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/select_sucursal.png' width="800"> 
+      <figcaption>Seleccionar Sucursal</figcaption>
+      </figure>
+</p>
+
+Una vez seleccionada la sucursal, se mostrará una tabla con la información de los empleados de caja pertenecientes a esta.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/info_workers.png' width="800"> 
+      <figcaption>Información Empleados de Caja</figcaption>
+      </figure>
+</p>
+
+3. Seleccionar una fecha para la cual se desea visualizar la información de demanda de la sucursal seleccionada.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/select_date.png' width="800"> 
+      <figcaption>Seleccionar Fecha</figcaption>
+      </figure>
+</p>
+
+Una vez seleccionada la fecha, se mostrará en una linea temporal la información de la demanda en dicha fecha para la sucursal seleccionada.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/demand_time.png' width="800"> 
+      <figcaption>Demanda Horaria</figcaption>
+      </figure>
+</p>
+
+4. Volver a la parte superior de la página y direccionarse a la pestaña **Programación Horaria**. 
+
+Una vez ejecutado este paso, se debe esperar algunos minutos, mientras el modelo encuentra la programación más eficiente para la sucursal seleccionada.
+
+5. Seleccionar una fecha para la cual se desea visualizar la información de demanda de la sucursal seleccionada. Por defecto esta fecha será la misma que se seleccionó en la pestaña **Información General**.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/select_date.png' width="800"> 
+      <figcaption>Seleccionar Fecha</figcaption>
+      </figure>
+</p>
+
+Una vez seleccionada la fecha, se mostrará una tabla con los horarios de los empleados de caja para la sucursal seleccionada en dicha fecha.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/horario.png' width="800"> 
+      <figcaption>Horario</figcaption>
+      </figure>
+</p>
+
+Además, se mostrará un gráfico de Capacidad Vs Demanda con su respectiva diferencia para cada una de las franjas horarias de la fecha seleccionada.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/capacidad_vs_demanda.png' width="800"> 
+      <figcaption>Capacidad Vs Demanda</figcaption>
+      </figure>
+</p>
+
+<p align="center">
+      <figure align="center">
+      <img src='./assets/diferencia_capacidad_demanda.png' width="800"> 
+      <figcaption>Diferencia Capacidad-Demanda</figcaption>
+      </figure>
+</p>
+
+6. Descargar archivo csv con la programación de la **semana** para la sucursal seleccionada.
+<p align="center">
+      <figure align="center">
+      <img src='./assets/descargar_csv.png' width="800"> 
+      <figcaption>Descargar Programación</figcaption>
+      </figure>
+</p>
+
+
+
+
+
+
+
+
 
 ### Consideraciones
 
@@ -581,6 +676,48 @@ curl -X 'POST' \
 En este ejemplo, {ruta_al_archivo_json} debe ser reemplazada por la ruta al archivo JSON que contiene los datos de entrada que desea enviar.
 
 ### Opción de Uso 3: Interface Web - Streamlit 
+
+Para hacer uso de esta opción, en primer lugar, se debe poner a correr la [Opción de Uso 2: Instalación con Docker para la FastAPI](#opci%C3%B3n-de-uso-2-instalaci%C3%B3n-con-docker-para-la-fastapi).
+
+Posteriormente, en caso de ser necesario se debe modificar la linea 19 de src/frontend/main.py, indicando la url en la que se está corriendo el servicio de FastApi. Esta url por default es http://127.0.0.1:8080.
+
+Luego, posicionandose nuevamente sobre el directorio del proyecto, acceda al directorio del frontend:
+
+```
+$ cd src/frontend
+```
+
+Cree un entorno virtual:
+
+```
+$ python3 -m venv venv
+```
+
+Active el entorno virtual:
+
+```
+$ source venv/bin/activate
+```
+
+Instale los requerimientos:
+
+```
+$ pip install -r requirements.txt
+```
+
+Lanze el servicio de streamlit:
+
+```
+$ streamlit run main.py
+```
+
+Haga uso del servicio de streamlit, siguiendo los pasos indicados en [Workflow](#workflow).
+
+
+
+
+
+
 
 
 
