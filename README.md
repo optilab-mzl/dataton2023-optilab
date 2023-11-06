@@ -343,15 +343,15 @@ Una vez seleccionada la fecha, se mostrará una tabla con los horarios de los em
 Además, se mostrará un gráfico de Capacidad Vs Demanda con su respectiva diferencia para cada una de las franjas horarias de la fecha seleccionada.
 <p align="center">
       <figure align="center">
-      <img src='./assets/capacidad_vs_demanda.png width="800"> 
-      <figcaption>Horario</figcaption>
+      <img src='./assets/capacidad_vs_demanda.png' width="800"> 
+      <figcaption>Capacidad Vs Demanda</figcaption>
       </figure>
 </p>
 
 <p align="center">
       <figure align="center">
       <img src='./assets/diferencia_capacidad_demanda.png' width="800"> 
-      <figcaption>Horario</figcaption>
+      <figcaption>Diferencia Capacidad-Demanda</figcaption>
       </figure>
 </p>
 
