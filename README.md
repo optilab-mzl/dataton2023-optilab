@@ -45,7 +45,7 @@
         - [REST API](#rest-api)
         - [Despliegue con Docker](#despliegue-con-docker)
 - [Características de la Arquitectura](#caracter%C3%ADsticas-de-la-arquitectura)
-- [Interface web detallado](#interface-web-detallado)
+- [Interfaz web detallado](#interfaz-web-detallado)
     - [Workflow](#workflow)
     - [Consideraciones](#consideraciones)
         - [Definición de las entradas](#definici%C3%B3n-de-las-entradas)
@@ -501,6 +501,17 @@ Asegúrese de estar en la raíz del directorio dataton2023-optilab antes de cont
 
 ### Opción de uso 1: Paquete de python - CLI
 
+Primero, cree un entorno virtual (o si desea instale de forma global si prefiere obviando este paso):
+
+```
+$ python3 -m venv venv
+```
+
+Active el entorno virtual:
+
+```
+$ source venv/bin/activate
+```
 
 Puedes instalar la herramienta como un paquete de Python utilizando pip:
 
@@ -712,12 +723,6 @@ $ streamlit run main.py
 ```
 
 Haga uso del servicio de streamlit, siguiendo los pasos indicados en [Workflow](#workflow).
-
-
-
-
-
-
 
 
 
