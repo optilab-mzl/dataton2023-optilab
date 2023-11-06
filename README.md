@@ -57,7 +57,7 @@
         - [Clone el repositorio:](#clone-el-repositorio)
         - [Navegar al Directorio del Repositorio](#navegar-al-directorio-del-repositorio)
     - [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli)
-    - [Opción de Uso 2: Instalación con Docker para la FastAPI](#opci%C3%B3n-de-uso-2-instalaci%C3%B3n-con-docker-para-la-fastapi)
+    - [Opción de Uso 2: Instalación con Docker para la Rest API](#opci%C3%B3n-de-uso-2-instalaci%C3%B3n-con-docker-para-la-rest-api)
         - [Construcción de la Imagen Docker](#construcci%C3%B3n-de-la-imagen-docker)
         - [Verificación de la Imagen Docker](#verificaci%C3%B3n-de-la-imagen-docker)
         - [Ejecución del Contenedor Docker](#ejecuci%C3%B3n-del-contenedor-docker)
@@ -546,11 +546,14 @@ Options:
 
 ```
 
-### Opción de Uso 2: Instalación con Docker para la FastAPI
+### Opción de Uso 2: Instalación con Docker para la Rest API
 
 Es importante destacar que, en contraste con la [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli), esta alternativa está diseñada para funcionar de manera independiente en cada sucursal. 
 
+
 #### Construcción de la Imagen Docker 
+
+Si usa windows es requerido que instale [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/).
 
 Para construir la imagen de Docker, utilice el siguiente comando en la terminal donde {parent_dir} es el directorio donde se encuentra el Dockerfile:
 
@@ -685,11 +688,11 @@ En este ejemplo, {ruta_al_archivo_json} debe ser reemplazada por la ruta al arch
 
 Para hacer uso de esta opción, en primer lugar, se debe poner a correr la [Opción de Uso 2: Instalación con Docker para la FastAPI](#opci%C3%B3n-de-uso-2-instalaci%C3%B3n-con-docker-para-la-fastapi).
 
-Posteriormente, en caso de ser necesario se debe modificar la linea 19 de src/frontend/main.py, indicando la url en la que se está corriendo el servicio de FastApi. Esta url por default es http://127.0.0.1:8080.
+Posteriormente, en caso de ser necesario se debe modificar la linea 19 de src/frontend/main.py, indicando la url en la que se está corriendo el servicio de FastApi. Esta url por default es http://0.0.0.0:8080, que es la que se usa por defecto en la creación del contenedor.
 
-Luego, posicionandose nuevamente sobre el directorio del proyecto, acceda al directorio del frontend:
+Luego, posicionándose nuevamente sobre el directorio del proyecto, acceda al directorio del frontend:
 
-Cree un entorno virtual o use el previamente creado, si ya lo creo [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli) :
+Cree un entorno virtual o use el previamente creado, si ya lo creo en la [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli) :
 
 ```
 $ python3 -m venv venv
@@ -701,6 +704,8 @@ Active el entorno virtual:
 $ source venv/bin/activate
 ```
 
+Luego vaya a la carpeta frontend
+
 ```
 $ cd src/frontend
 ```
@@ -711,7 +716,7 @@ Instale los requerimientos:
 $ pip install -r requirements.txt
 ```
 
-Lanze el servicio de streamlit:
+Lance el servicio de streamlit:
 
 ```
 $ streamlit run main.py
