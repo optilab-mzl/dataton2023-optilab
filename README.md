@@ -274,7 +274,7 @@ La arquitectura propuesta ofrece las siguientes características clave:
 
 
 
-## Interface web detallado
+## Interfaz web detallado
 
 ### Workflow
 
@@ -322,7 +322,9 @@ Una vez seleccionada la fecha, se mostrará en una linea temporal la informació
       </figure>
 </p>
 
-4. Volver a la parte superior de la página y direccionarse a la pestaña **Programación Horaria**.
+4. Volver a la parte superior de la página y direccionarse a la pestaña **Programación Horaria**. 
+
+Una vez ejecutado este paso, se debe esperar algunos minutos, mientras el modelo encuentra la programación más eficiente para la sucursal seleccionada.
 
 5. Seleccionar una fecha para la cual se desea visualizar la información de demanda de la sucursal seleccionada. Por defecto esta fecha será la misma que se seleccionó en la pestaña **Información General**.
 <p align="center">
@@ -667,6 +669,48 @@ curl -X 'POST' \
 En este ejemplo, {ruta_al_archivo_json} debe ser reemplazada por la ruta al archivo JSON que contiene los datos de entrada que desea enviar.
 
 ### Opción de Uso 3: Interface Web - Streamlit 
+
+Para hacer uso de esta opción, en primer lugar, se debe poner a correr la [Opción de Uso 2: Instalación con Docker para la FastAPI](#opci%C3%B3n-de-uso-2-instalaci%C3%B3n-con-docker-para-la-fastapi).
+
+Posteriormente, en caso de ser necesario se debe modificar la linea 19 de src/frontend/main.py, indicando la url en la que se está corriendo el servicio de FastApi. Esta url por default es http://127.0.0.1:8080.
+
+Luego, posicionandose nuevamente sobre el directorio del proyecto, acceda al directorio del frontend:
+
+```
+$ cd src/frontend
+```
+
+Cree un entorno virtual:
+
+```
+$ python3 -m venv venv
+```
+
+Active el entorno virtual:
+
+```
+$ source venv/bin/activate
+```
+
+Instale los requerimientos:
+
+```
+$ pip install -r requirements.txt
+```
+
+Lanze el servicio de streamlit:
+
+```
+$ streamlit run main.py
+```
+
+Haga uso del servicio de streamlit, siguiendo los pasos indicados en [Workflow](#workflow).
+
+
+
+
+
+
 
 
 
