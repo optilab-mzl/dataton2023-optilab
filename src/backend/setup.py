@@ -38,6 +38,6 @@ setup(
     #long_description=README,
     long_description_content_type='text/markdown',
 
-    python_requires='>=3.10',
+    python_requires='>=3.9',
 
 )
