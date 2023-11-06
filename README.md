@@ -1,3 +1,6 @@
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ tex2jax: {inlineMath: [['$', '$']]}, messageStyle: "none" });</script>
+
 <p align="center">
   <img src='./assets/logo.png' width="200"> 
 </p>
@@ -81,7 +84,7 @@ Bancolombia está interesado en mejorar la programación horaria SEMANAL de los 
 
 1. **Trabaja**: El empleado esta disponible para atender clientes.
 2. **Pausa Activa**: El empleado no esta disponible para atender clientes.
-3. **Almuerza**: El empleado esta tomando su tiempo de almuerzo (no disponible para atender <ruta_salida>clientes)
+3. **Almuerza**: El empleado esta tomando su tiempo de almuerzo (no disponible para atender clientes)
 4. **Nada**: El empleado no ha comenzado su jornada laboral o ya la termino.
 
 **El objetivo del ejercicio es definir en qué estado se encuentra cada uno de los empleados en franjas horarias de 15 minutos con el fin de minimizar la diferencia existente entre la cantidad de empleados trabajando y la demanda de empleados requerida para cada franja horaria cuando la demanda es mayor a la capacidad**. Estas demandas se tienen para cada una de las franjas para todos los días de una semana de lunes a sábado.
@@ -167,7 +170,7 @@ A continuación, se expone la estrategia implementada para abordar el desafío p
 
 ### Aplicación de la Programación con Restricciones
 
-Ante la complejidad combinatoria del problema, caracterizada por la gran cantidad de posibles combinaciones de asignaciones horarias, hemos recurrido a la técnica de Programación con Restriciones ([Constraint Programming][Constraint Programming (CP)](https://en.wikipedia.org/wiki/Constraint_programming), CP). Este paradigma, que encuentra aplicaciones en campos tan diversos como la inteligencia artificial, las ciencias de la computación y la investigación operativa, es particularmente efectivo para problemas de esta naturaleza.
+Ante la complejidad combinatoria del problema, caracterizada por la gran cantidad de posibles combinaciones de asignaciones horarias, hemos recurrido a la técnica de Programación con Restriciones ([Constraint Programming (CP)](https://en.wikipedia.org/wiki/Constraint_programming), CP). Este paradigma, que encuentra aplicaciones en campos tan diversos como la inteligencia artificial, las ciencias de la computación y la investigación operativa, es particularmente efectivo para problemas de esta naturaleza.
 
 La técnica de CP permite delimitar y explorar el espacio de soluciones factibles, aplicando restricciones que reducen progresivamente las posibilidades hasta identificar las asignaciones válidas. Además, esta metodología puede complementarse con algoritmos de optimización, lo que no solo garantiza encontrar una solución, sino que también busca que esta sea la más óptima dentro del conjunto de posibles soluciones.
 
@@ -181,7 +184,10 @@ La formulación matemática del problema es la siguiente:
 $$
 \begin{align*}
 \mathbf{P}^* = \arg \min_{\mathbf{P}} \sum_d \sum_f \max(0, \mathbf{D}_{d,f}- \sum_t \mathbf{P} ^{+} _{t,d,f})
-\\
+\end{align*}
+$$ 
+$$
+\begin{align*}
 \text{Sujeto a } C_1(\mathbf{P}) \land C_2(\mathbf{P}) \land \dots \land  C_n(\mathbf{P})
 \end{align*}
 $$ 
@@ -219,7 +225,7 @@ A continuación, se presenta un resumen de las programaciones horarias que fuero
 | 487|<img width="600" src="./data/resultados_etapa_2/suc_487.png">|  <img width="600" src="./data/resultados_etapa_2/DC_487.png">|
 | 569|<img width="600" src="./data/resultados_etapa_2/suc_569.png">|  <img width="600" src="./data/resultados_etapa_2/DC_569.png">|
 
-Para ver los resultados completos vaya al siguiente [link](./data/resultados_etapa_2/).
+Para ver los resultados completos vaya a la siguiente carpeta [./data/resultados_etapa_2/](./data/resultados_etapa_2/).
 
 
 ## Arquitectura de la Solución
@@ -228,12 +234,13 @@ La solución propuesta se estructura en torno a dos arquitecturas distintas: Arq
 ### Arquitectura Basada en Consola
 
 La primera arquitectura se fundamenta completamente en un paquete de Python diseñado para su uso a través de la línea de comandos. Esta elección busca maximizar la dedicación de recursos al sistema de optimización, garantizando así un rendimiento óptimo.
-    <p align="center">
-    <figure align="center">
-    <img src='./assets/architecture_cli.png' width="300"> 
-    <figcaption>Arquitectura del CLI</figcaption>
-    </figure>
-    </p>
+    
+<div align="center">
+<figure align="center">
+<img src='./assets/architecture_cli.png' width="400"> 
+<figcaption>Arquitectura del CLI</figcaption>
+</figure>
+</div>
 
 #### Paquete de Python para Optimización
 El núcleo de ambas arquitecturas es el paquete de optimización desarrollado en Python. Este paquete incorpora un modelo de optimización completo, incluyendo todas las restricciones requeridas para su funcionamiento eficaz. Además, el desarrollo de este paquete se ha llevado a cabo utilizando software de código abierto, lo que fomenta la colaboración y la transparencia.
@@ -245,12 +252,12 @@ La interfaz de línea de comandos (CLI) que hemos diseñado se enfoca en maximiz
 
 La segunda arquitectura está concebida para ser más accesible tanto para usuarios no técnicos como para desarrolladores. Incluye una interfaz web intuitiva y una RestAPI, facilitando la integración con otros sistemas informáticos. Esta versión se ha desarrollado a partir del paquete original de Python, utilizando FastAPI para la creación de la RestAPI y Docker para simplificar su despliegue y escalabilidad.
 
-<p align="center">
+<div align="center">
       <figure align="center">
       <img src='./assets/architecture_docker.png' width="800"> 
       <figcaption>Arquitectura del interface we</figcaption>
       </figure>
-</p>
+</div>
 
 #### Interfaz Web
 Para facilitar el acceso de los usuarios, se ha desarrollado una interfaz web empleando Streamlit. Esta interfaz no solo simplifica la obtención de programaciones horarias, sino que también proporciona visualizaciones claras y útiles de los datos. Su diseño intuitivo y su facilidad de navegación la hacen accesible para todo tipo de usuarios. 
@@ -444,7 +451,7 @@ Es importante destacar que, en contraste con la [Opción de uso 1: Paquete de py
 
 #### Construcción de la Imagen Docker 
 
-Para construir la imagen de Docker, utilice el siguiente comando en la terminal:
+Para construir la imagen de Docker, utilice el siguiente comando en la terminal donde {parent_dir} es el directorio donde se encuentra el Dockerfile:
 
 ```
 $ docker build -t scheduling:1.0  {parent_dir}
@@ -521,7 +528,7 @@ Para realizar una solicitud POST, el cuerpo de la solicitud debe seguir la sigui
 
 ```
 
-Puede encontrar ejemplos concretos de JSON en el siguiente [link](./src/backend/data/input/)
+Puede encontrar ejemplos concretos de JSON en la siguiente carpeta [./src/backend/data/input/](./src/backend/data/input/)
 
 
 ##### Estructura JSON de la Respuesta
@@ -548,7 +555,7 @@ La respuesta de la API seguirá el siguiente formato JSON:
 }
 ```
 
-Ejemplos específicos de respuestas JSON están disponibles en este [link](./src/backend/data/output/)
+Ejemplos específicos de respuestas JSON están en esta carpeta [./src/backend/data/output/](./src/backend/data/output/)
 
 #### Ejemplo de Uso con cURL
 Para hacer una solicitud POST a la API utilizando cURL, puede seguir este ejemplo:
