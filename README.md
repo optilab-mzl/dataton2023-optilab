@@ -290,93 +290,87 @@ Se ha desarrollado una interfaz web utilizando el paquete de python **streamlit*
 A continuación se enumera una serie de pasos que se deben seguir a la hora de evaluar la solución desde la interfaz gráfica desarrollada:
 
 1. En la pestaña **información general**, subir el libro de excel con la estructura específicada en la sección [Definición de las entradas](#definici%C3%B3n-de-las-entradas).
-<p align="center">
-      <figure align="center">
-      <img src='./assets/upload_excel.png' width="800"> 
-      <figcaption>Subir Archivo Excel de Entrada</figcaption>
-      </figure>
-</p>
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/upload_excel.png' width="800"> 
+          <figcaption>Subir Archivo Excel de Entrada</figcaption>
+          </figure>
+    </p>
 
 2. Seleccionar la sucursal para la cual se desea programar el horario semanal de los empleados de caja.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/select_sucursal.png' width="800"> 
-      <figcaption>Seleccionar Sucursal</figcaption>
-      </figure>
-</p>
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/select_sucursal.png' width="800"> 
+          <figcaption>Seleccionar Sucursal</figcaption>
+          </figure>
+    </p>
 
-Una vez seleccionada la sucursal, se mostrará una tabla con la información de los empleados de caja pertenecientes a esta.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/info_workers.png' width="800"> 
-      <figcaption>Información Empleados de Caja</figcaption>
-      </figure>
-</p>
+    Una vez seleccionada la sucursal, se mostrará una tabla con la información de los empleados de caja pertenecientes a esta.
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/info_workers.png' width="800"> 
+          <figcaption>Información Empleados de Caja</figcaption>
+          </figure>
+    </p>
 
 3. Seleccionar una fecha para la cual se desea visualizar la información de demanda de la sucursal seleccionada.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/select_date.png' width="800"> 
-      <figcaption>Seleccionar Fecha</figcaption>
-      </figure>
-</p>
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/select_date.png' width="800"> 
+          <figcaption>Seleccionar Fecha</figcaption>
+          </figure>
+    </p>
 
-Una vez seleccionada la fecha, se mostrará en una linea temporal la información de la demanda en dicha fecha para la sucursal seleccionada.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/demand_time.png' width="800"> 
-      <figcaption>Demanda Horaria</figcaption>
-      </figure>
-</p>
+    Una vez seleccionada la fecha, se mostrará en una linea temporal la información de la demanda en dicha fecha para la sucursal seleccionada.
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/demand_time.png' width="800"> 
+          <figcaption>Demanda Horaria</figcaption>
+          </figure>
+    </p>
 
 4. Volver a la parte superior de la página y direccionarse a la pestaña **Programación Horaria**. 
 
-Una vez ejecutado este paso, se debe esperar algunos minutos, mientras el modelo encuentra la programación más eficiente para la sucursal seleccionada.
+    Una vez ejecutado este paso, se debe esperar algunos minutos, mientras el modelo encuentra la programación más eficiente para la sucursal seleccionada.
 
 5. Seleccionar una fecha para la cual se desea visualizar la información de demanda de la sucursal seleccionada. Por defecto esta fecha será la misma que se seleccionó en la pestaña **Información General**.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/select_date.png' width="800"> 
-      <figcaption>Seleccionar Fecha</figcaption>
-      </figure>
-</p>
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/select_date.png' width="800"> 
+          <figcaption>Seleccionar Fecha</figcaption>
+          </figure>
+    </p>
 
-Una vez seleccionada la fecha, se mostrará una tabla con los horarios de los empleados de caja para la sucursal seleccionada en dicha fecha.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/horario.png' width="800"> 
-      <figcaption>Horario</figcaption>
-      </figure>
-</p>
+    Una vez seleccionada la fecha, se mostrará una tabla con los horarios de los empleados de caja para la sucursal seleccionada en dicha fecha.
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/horario.png' width="800"> 
+          <figcaption>Horario</figcaption>
+          </figure>
+    </p>
 
-Además, se mostrará un gráfico de Capacidad Vs Demanda con su respectiva diferencia para cada una de las franjas horarias de la fecha seleccionada.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/capacidad_vs_demanda.png' width="800"> 
-      <figcaption>Capacidad Vs Demanda</figcaption>
-      </figure>
-</p>
+    Además, se mostrará un gráfico de Capacidad Vs Demanda con su respectiva diferencia para cada una de las franjas horarias de la fecha seleccionada.
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/capacidad_vs_demanda.png' width="800"> 
+          <figcaption>Capacidad Vs Demanda</figcaption>
+          </figure>
+    </p>
 
-<p align="center">
-      <figure align="center">
-      <img src='./assets/diferencia_capacidad_demanda.png' width="800"> 
-      <figcaption>Diferencia Capacidad-Demanda</figcaption>
-      </figure>
-</p>
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/diferencia_capacidad_demanda.png' width="800"> 
+          <figcaption>Diferencia Capacidad-Demanda</figcaption>
+          </figure>
+    </p>
 
 6. Descargar archivo csv con la programación de la **semana** para la sucursal seleccionada.
-<p align="center">
-      <figure align="center">
-      <img src='./assets/descargar_csv.png' width="800"> 
-      <figcaption>Descargar Programación</figcaption>
-      </figure>
-</p>
-
-
-
-
-
-
+    <p align="center">
+          <figure align="center">
+          <img src='./assets/descargar_csv.png' width="800"> 
+          <figcaption>Descargar Programación</figcaption>
+          </figure>
+    </p>
 
 
 
@@ -443,7 +437,7 @@ El diseño del sistema se basa en una arquitectura de microservicios, pero se ha
 │   │   ├── data    # Datos de prueba para testear el backend
 │   │   ├── Dockerfile    # Instrucciones para construir la imagen Docker del backend
 │   │   ├── main.py       # Punto de entrada principal para la aplicación backend
-│   │   ├── model.py      # Modelo para optener la programacion resultado del proceso de optimización
+│   │   ├── model.py      # Modelo para obtener la programación resultado del proceso de optimización
 │   │   ├── pydantic_models.py    # Definiciones de esquemas Pydantic para validación de datos
 │   │   ├── requirements.txt      # Dependencias necesarias para el backend
 │   │   ├── scheduling_optimization   # Módulo de optimización de programaciones
@@ -455,7 +449,8 @@ El diseño del sistema se basa en una arquitectura de microservicios, pero se ha
 │   │   ├── setup.py               # Script de configuración para la instalación del paquete
 │   │   └── test_main.py           # Pruebas para el código del backend
 │   └── frontend   # Código fuente para la interfaz de usuario web
-│       ├── Dockerfile             # Instrucciones para construir la imagen Docker del frontend
+│       ├── Bancolombia_S.A._logo.svg.png  #Logo para la intefaz
+│       ├── main.py                 # Código de streamlit para la intefaz
 │       └── requirements.txt       # Dependencias necesarias para el frontend
 └── test            # Tests adicionales y pruebas de integración para el sistema completo
 ```
@@ -694,11 +689,7 @@ Posteriormente, en caso de ser necesario se debe modificar la linea 19 de src/fr
 
 Luego, posicionandose nuevamente sobre el directorio del proyecto, acceda al directorio del frontend:
 
-```
-$ cd src/frontend
-```
-
-Cree un entorno virtual:
+Cree un entorno virtual o use el previamente creado, si ya lo creo [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli) :
 
 ```
 $ python3 -m venv venv
@@ -708,6 +699,10 @@ Active el entorno virtual:
 
 ```
 $ source venv/bin/activate
+```
+
+```
+$ cd src/frontend
 ```
 
 Instale los requerimientos:
