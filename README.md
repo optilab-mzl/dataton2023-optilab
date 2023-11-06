@@ -359,7 +359,7 @@ Además, se mostrará un gráfico de Capacidad Vs Demanda con su respectiva dife
 <p align="center">
       <figure align="center">
       <img src='./assets/descargar_csv.png' width="800"> 
-      <figcaption>Horario</figcaption>
+      <figcaption>Descargar Programación</figcaption>
       </figure>
 </p>
 
