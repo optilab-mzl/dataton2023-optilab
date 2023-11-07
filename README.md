@@ -543,6 +543,9 @@ Options:
 
 ```
 
+**Advertencia**:  El proceso de búsqueda está sujeto a variaciones en el tiempo de ejecución. Por ello, se ha establecido un límite de tiempo para garantizar la entrega de resultados. Si este plazo, actualmente fijado en 380 segundos por sucursal, se excede, el sistema proporcionará una solución posible, aunque no necesariamente óptima. La personalización de este límite de tiempo está disponible únicamente en esta modalidad de uso.
+
+
 ### Opción de Uso 2: Instalación con Docker para la Rest API
 
 Es importante destacar que, en contraste con la [Opción de uso 1: Paquete de python - CLI](#opci%C3%B3n-de-uso-1-paquete-de-python---cli), esta alternativa está diseñada para funcionar de manera independiente en cada sucursal. 
