@@ -13,7 +13,7 @@ import base64
 
 
 #Run the backend in  this url:
-backend_api_url = "http://0.0.0.0:8000"
+backend_api_url = "http://0.0.0.0:8080"
 
 ####FUNCTIONS:
 def get_schedule(input):
@@ -278,14 +278,18 @@ with tab1:
 # Schedule Tab:
 with tab2:
     if uploaded_file is not None:
+        
+        with st.spinner("Encontrando la programación más eficiente..."):
+            input_service=demand_jobs_to_json(info_demand_copy_input, info_workers_suc)
+            output_service=get_schedule(input_service)
+            output=output_service["rows"]
+            df_output=pd.DataFrame(output)
+        
+        st.success("Programación Encontrada!")
+        
         # Select to choose a fecha
         st.markdown(f"<p style='font-size: 24px; font-weight: bold;'>Selecciona una fecha para la cual desea visualizar la información de la sucursal seleccionada:</p>", unsafe_allow_html=True)
         selected_fecha = st.selectbox(" ", unique_dates)
-        
-        input_service=demand_jobs_to_json(info_demand_copy_input, info_workers_suc)
-        output_service=get_schedule(input_service)
-        output=output_service["rows"]
-        df_output=pd.DataFrame(output)
         
         
         schedule_select_suc=df_output.copy()
