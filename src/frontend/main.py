@@ -13,7 +13,7 @@ import base64
 
 
 #Run the backend in  this url:
-backend_api_url = "http://0.0.0.0:8080"
+backend_api_url = "http://0.0.0.0:8000"
 
 ####FUNCTIONS:
 def get_schedule(input):
