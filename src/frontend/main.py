@@ -120,6 +120,14 @@ def schedule_day(df_schedule: pd.DataFrame, day: str = None, ax: plt.Axes = None
     
     return pivot_df
 
+@st.cache_resource
+def programming(input_service:dict):
+    output_service=get_schedule(input_service)
+    output=output_service["rows"]
+    df_output=pd.DataFrame(output)
+        
+    return df_output
+
     
 
 
@@ -274,6 +282,9 @@ with tab1:
         plt.xticks(rotation=90)
         #Show the plot
         st.pyplot(fig)
+        
+
+    
 
 # Schedule Tab:
 with tab2:
@@ -281,9 +292,13 @@ with tab2:
         
         with st.spinner("Encontrando la programación más eficiente..."):
             input_service=demand_jobs_to_json(info_demand_copy_input, info_workers_suc)
+            df_output=programming(input_service)
+        
+        """with st.spinner("Encontrando la programación más eficiente..."):
+            input_service=demand_jobs_to_json(info_demand_copy_input, info_workers_suc)
             output_service=get_schedule(input_service)
             output=output_service["rows"]
-            df_output=pd.DataFrame(output)
+            df_output=pd.DataFrame(output)"""
         
         st.success("Programación Encontrada!")
         
